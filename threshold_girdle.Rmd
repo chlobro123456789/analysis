@@ -1,0 +1,137 @@
+---
+title: "Threshold girdle"
+author: "Chloe Brown"
+date: "9/30/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+```{r}
+library('sciplot')
+library('multcomp')
+library('ade4')
+library('vegan')
+library('ggplot2')
+library('lme4')
+```
+
+
+
+
+```{r}
+thresholdgirdle <- read.csv("thresholdgirdle.csv", header = T, sep = ",")
+str(thresholdgirdle)
+```
+
+
+
+
+```{r}
+mean.count <- tapply(thresholdgirdle$response,
+                     list(thresholdgirdle$stimulus), 
+                     mean)
+mean.count
+```
+
+
+```{r}
+plot(mean.count)
+```
+
+
+### The girdle model
+
+
+```{r}
+girdlemodel.4 <- glmer(
+  response ~ stimulus + (1|stimulus_order) + (1|length) + (1|individual),
+  data = thresholdgirdle, 
+  family = binomial(), 
+  control = glmerControl(optimizer = "optimx",
+                         calc.derivs = FALSE,
+                         optCtrl = list(
+                           method = "nlminb", starttests = FALSE, kkt = FALSE)
+                         )
+  )
+
+summary(girdlemodel.4)
+```
+
+### NUll model and model comparison
+
+```{r}
+girdlemodel.0000 <- glmer(
+  response ~ 1 + (1|stimulus_order) + (1|length) + (1|individual),
+  data = thresholdgirdle,
+  family = binomial(),
+  control = glmerControl(
+    optimizer = "optimx", calc.derivs = FALSE,
+    optCtrl = list(method = "nlminb", starttests = FALSE, kkt = FALSE)
+    )
+  )
+
+anova(girdlemodel.0000,girdlemodel.4)
+```
+
+
+
+with(thresholdgirdle, unique(stimulus))
+Make dummy data frame
+
+```{r}
+newdata.df <- data.frame(
+  # stimulus = with(thresholdgirdle, unique(stimulus)),
+  stimulus   = rep(
+                   seq(
+                   from=min(thresholdgirdle$stimulus), 
+                   to=max(thresholdgirdle$stimulus),
+                   length.out = 200), # pick 200 pts of stimulus in the range
+                   20),
+  
+  length     = rep(
+                   seq(
+                   from=min(thresholdgirdle$length), 
+                   to=max(thresholdgirdle$length),
+                   length.out = 20),
+                   200),
+  
+  individual = sample(thresholdgirdle$individual, 4000,
+                      replace = TRUE), # randomly pick ind
+  
+  stimulus_order = sample(thresholdgirdle$stimulus_order, 4000,
+                      replace = TRUE)
+  )
+```
+
+
+```{r}
+predictions <- predict(girdlemodel.4, #interval = 'confidence',
+       newdata = newdata.df,
+       allow.new.levels = TRUE
+        )
+```
+
+### Plot predicted data
+
+Plogis is the logistic function.
+
+```{r}
+plot(-newdata.df$stimulus,plogis(predictions))
+```
+
+
+
+
+```{r}
+#library('ggiraphExtra')
+#fitted <-ggPredict(girdlemodel.4, "stimulus")
+```
+
+
+
+
