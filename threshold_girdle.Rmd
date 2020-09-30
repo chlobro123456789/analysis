@@ -18,13 +18,15 @@ library('ade4')
 library('vegan')
 library('ggplot2')
 library('lme4')
+library('tidyverse')
+library('ggeffects')
 ```
 
 
 
 
 ```{r}
-thresholdgirdle <- read.csv("thresholdgirdle.csv", header = T, sep = ",")
+thresholdgirdle <- read_csv("thresholdgirdle.csv")
 str(thresholdgirdle)
 ```
 
@@ -62,6 +64,7 @@ girdlemodel.4 <- glmer(
 summary(girdlemodel.4)
 ```
 
+
 ### NUll model and model comparison
 
 ```{r}
@@ -78,10 +81,7 @@ girdlemodel.0000 <- glmer(
 anova(girdlemodel.0000,girdlemodel.4)
 ```
 
-
-
-with(thresholdgirdle, unique(stimulus))
-Make dummy data frame
+### Make dummy data frame and plot predicted data
 
 ```{r}
 newdata.df <- data.frame(
@@ -106,32 +106,52 @@ newdata.df <- data.frame(
   stimulus_order = sample(thresholdgirdle$stimulus_order, 4000,
                       replace = TRUE)
   )
-```
 
-
-```{r}
 predictions <- predict(girdlemodel.4, #interval = 'confidence',
        newdata = newdata.df,
        allow.new.levels = TRUE
         )
+
+plot(newdata.df$stimulus,plogis(predictions))
 ```
 
-### Plot predicted data
+The above is primitive but might give you some idea of what is going on below. 
 
-Plogis is the logistic function.
+
+### Now get the marginal effects at the mean with the ggeffects package
+
+Setting [n=500] or whatever number predicts many points in the range rather than just the original levels. 
 
 ```{r}
-plot(-newdata.df$stimulus,plogis(predictions))
+predz <- ggpredict(girdlemodel.4, 
+                   terms = c('stimulus [n=500]') 
+                   ) 
+predz %>% plot()
 ```
 
+### Get the turning point
 
-
+Plot the derivative of the predicted line
 
 ```{r}
-#library('ggiraphExtra')
-#fitted <-ggPredict(girdlemodel.4, "stimulus")
+derivative = c(diff(predz$predicted) / diff(predz$x), 0)
+find.df <- cbind.data.frame(predz$x,derivative)
+ggplot(find.df, aes(predz$x, derivative)) + geom_line()
 ```
 
+It's at the bottom as the line is descending. We get the value below.
+
+```{r}
+max_deriv <- which(derivative==min(derivative))
+inflection_pt <- predz$x[max_deriv]
+inflection_pt
+```
+
+Remake the plot with the point indicated.
+
+```{r}
+predz %>% plot() + geom_vline(xintercept = inflection_pt)
+```
 
 
 
