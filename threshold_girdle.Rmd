@@ -153,5 +153,3 @@ Remake the plot with the point indicated.
 predz %>% plot() + geom_vline(xintercept = inflection_pt)
 ```
 
-
-

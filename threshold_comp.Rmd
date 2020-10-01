@@ -1,0 +1,229 @@
+---
+title: "Threshold girdle"
+author: "Chloe Brown & John Kirwan"
+date: '2020-10-01'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+library('sciplot')
+library('multcomp')
+library('ade4')
+library('vegan')
+library('ggplot2')
+library('lme4')
+library('tidyverse')
+library('ggeffects')
+library('AICcmodavg') # Used for AIC comparison
+```
+
+
+```{r}
+thresholdcomp              <- read_csv("thresholdcomp.csv")
+thresholdcomp$treatment    <- as.factor(thresholdcomp$treatment)
+thresholdcomp$size         <- as.factor(thresholdcomp$size)
+thresholdcomp$individual   <- as.factor(thresholdcomp$individual)
+thresholdcomp$response     <- as.factor(thresholdcomp$response)
+str(thresholdcomp)
+```
+
+
+### Graphs
+
+```{r}
+stimmult <-thresholdcomp$response*100
+stimorder <-factor(thresholdcomp$stimulus, levels = unique(thresholdcomp$stimulus)) 
+# to make bars in the order found in csv file
+
+bargraph.CI(stimorder, stimmult, group = treatment, legend=T,
+            data=thresholdcomp, ylim=c(0,100), xlab = "Stimulus",
+            ylab = "Shadow Responses Elicited (%)")
+```
+
+Still need to find a way to make this plot nicer.
+
+```{r}
+thresholdcomp %>% 
+  ggplot(aes(x = factor(stimulus),fill = response)) + 
+    geom_bar(position = "fill")
+```
+
+### Stripchart
+
+```{r}
+props <- with(thresholdcomp, aggregate(response, by  = list(length = length, stimulus = stimulus), mean))
+
+#stripchart(x~stimulus*length, data = props, vertical = T, cex = 0.5, ylab = 'Proportion Responding')
+```
+
+### Likelihood models with lme4
+
+If it says singular thing then it means there is not enough infomration because you have split the data up too much with effects. If model not working, try changing optimisation.
+
+#### Main model
+
+```{r Main model}
+compmodel.5<- glmer(
+  response ~ stimulus + treatment + (1|individual) + (1|length) + (1|stim_order),
+  data = thresholdcomp, family = binomial("logit"),
+  control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
+                         optCtrl = list(method = "nlminb", starttests = FALSE)))  #  + stimulus:treatment + (1|stim_order) + (1|length) + (1|individual)   # + (1|length)
+
+compmodel.5
+```
+
+
+#### Null model without stimulus
+
+```{r Null model}
+compmodel.null <-glmer(
+  response ~ treatment + (1|individual) + (1|length) + (1|stim_order),
+  data = thresholdcomp, family = binomial(), 
+  control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
+            optCtrl = list(method = "nlminb", starttests = FALSE)))
+
+compmodel.null
+```
+
+
+#### Null model without stimulus or treatment
+
+```{r}
+compmodel.0 <-glmer(
+  response ~ 1  + (1|individual) + (1|length) + (1|stim_order),
+  data = thresholdcomp, family = binomial(), 
+  control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
+            optCtrl = list(method = "nlminb", starttests = FALSE)))
+
+compmodel.0
+```
+
+
+#### Full model with stimulus, treatment, and their interaction
+
+```{r}
+compmodel.int <-glmer(
+  response ~ stimulus*treatment  + (1|individual) + (1|length) + (1|stim_order),
+  data = thresholdcomp, family = binomial(),
+  control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
+             optCtrl = list(method = "nlminb", starttests = FALSE)))
+
+compmodel.int
+```
+
+        
+#### Full model with stimulus, treatment, and their interaction and random slopes
+                                             
+```{r}
+compmodel.intslope <-glmer(
+  response ~ stimulus*treatment  + (1+stimulus|individual) + (1+stimulus|length) + (1|stim_order),
+  data = thresholdcomp, family = binomial(),
+  control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
+                optCtrl = list(method = "nlminb", starttests = FALSE))) 
+
+compmodel.intslope
+```
+
+                                             
+                                             
+#putting (1+stimulus|random) effect tells the model that there may be differing intercepts based on the random effect, i.e. the baseline responses of the individual and those of differing sizes may be different.
+#I didn't add to stim_order because it threw an error.
+
+
+```{r}
+anova(compmodel.5, compmodel.null,compmodel.0,compmodel.int, compmodel.intslope) 
+```
+
+
+
+```{r}
+models <- list(compmodel.5, compmodel.null,compmodel.0,compmodel.int, compmodel.intslope)
+model.names <- c('compmodel.5', 'compmodel.null','compmodel.0','compmodel.int', 'compmodel.intslope')
+aictab(cand.set = models, modnames = model.names)
+```
+
+Based on this, the best model is the one with an interaction between stimulus and treatment that allow for different baseline responses in length and individual. 
+
+> It carries 100% of total explanation.
+
+What do you mean by that last part? 
+
+#### Look at the model summary
+
+```{r}
+summary(compmodel.intslope)
+```
+
+### Chloe's comments
+
+> If this all looks OK, then please can I have some help interpreting the output of this.
+
+Yes. This looks OK. And yes, I think i can help.
+
+> What I think I can say: there's an effect of treatment because there the best model included an interaction between the stimuli the individual has a strong (I think) effect and length does but less so.
+
+Yes. It is the best model, it also has far more degrees of freedom than the others but it is much better regardless, as revealed by the AIC values and the LRT tests.
+
+Yes, the effect of individual is large, in relation to how the response changed with stimulus (it makes sense that it should be conditional upon stimulus - they should all do equally poorly when there is no stimulus). Did you observe this? Did different animals perform very differently? You can also make a summary plot of the original data, which plots a different line for each individual to test this. 
+
+Yes, the effect is length is much smaller. If you wanted, you could also filter your data to include only large, salient stimuli and plot the proportion responses against body length.
+
+> I'm not sure how to interpret the intercept and stimulus part.
+
+The intercept and slope (stimulus) are the parameters of the regression line but they are still in logit space. You can get the model fit by plugging them back into the line formula (y=mx+c) and putting it into logit space with the logit link, which in R, you can apply with pnorm().
+
+```{r}
+fixed <- fixef(compmodel.intslope) 
+fixed
+```
+
+Above, we pull out the fixed effect coefficients. 
+
+```{r}
+X  <- seq(from=-1,to=0.2,by=.02)
+y_control <- pnorm( fixed[2]*X + fixed[1])
+plot(X,y_control,main='Whole (control) stimulus')
+lines(X,y_control)
+```
+
+The intercept represents the *whole* treatment, so that is what is plotted above. How does this compare to your data?
+
+You can compare how to predictions out of the model (below), though I think this should be across all treatments. 
+
+
+```{r}
+predz <- ggpredict(compmodel.intslope, 
+                   terms = c('stimulus [n=500]','treatment') 
+                   ) 
+predz %>% plot()
+```
+
+> I don't know what's going on with the correlation of fixed effects or the fixed effects.
+
+Don't worry so much about the correlations. That is literally telling you if they are correlated (it's a covariance matrix) which can be important, for instance if you have highly correlated effects effects which can be problematic. 
+
+The values out of the fix effects are *contrasts* contrasted against the default situation, which is the intercept (decided by the order of your factor levels). To get other values, you add the effects; e.g. to get the response in relation to stimulus with the valve stimulus, you can get. Again, you can compare to the panel above.
+
+```{r}
+plot(X,y_control,main='Response to stimuli',col="red",xlim=c(-1,0.2))
+lines(X,y_control,col="red")
+
+y_valve <- pnorm( (fixed[2] + fixed[6])*X + (fixed[1] + fixed[4]) )
+points(X,y_valve,col="green")
+lines(X,y_valve,col="green")
+
+y_girdle <- pnorm( (fixed[2] + fixed[5])*X + (fixed[1] + fixed[3]) )
+points(X,y_girdle,col="blue")
+lines(X,y_girdle,col="blue")
+
+```
+
+I made the primitive plot above so that you can see how the fancier plot is made. The fancier plot also includes the measures of error. 
+
+
+
