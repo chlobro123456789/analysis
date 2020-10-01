@@ -221,6 +221,7 @@ y_girdle <- pnorm( (fixed[2] + fixed[5])*X + (fixed[1] + fixed[3]) )
 points(X,y_girdle,col="blue")
 lines(X,y_girdle,col="blue")
 
+abline(v=0,col="grey")
 ```
 
 I made the primitive plot above so that you can see how the fancier plot is made. The fancier plot also includes the measures of error. 
