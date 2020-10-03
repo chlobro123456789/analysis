@@ -72,7 +72,7 @@ compmodel.5<- glmer(
   response ~ stimulus + treatment + (1|individual) + (1|length) + (1|stim_order),
   data = thresholdcomp, family = binomial("logit"),
   control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
-                         optCtrl = list(method = "nlminb", starttests = FALSE)))  #  + stimulus:treatment + (1|stim_order) + (1|length) + (1|individual)   # + (1|length)
+                         optCtrl = list(method = "nlminb", starttests = FALSE))) 
 
 compmodel.5
 ```
@@ -197,10 +197,15 @@ You can compare how to predictions out of the model (below), though I think this
 
 
 ```{r}
-predz <- ggpredict(compmodel.intslope, 
-                   terms = c('stimulus [n=500]','treatment') 
+x_prediction_sequence <- seq(from=-1, to=0.2, by= 0.005)
+
+predz <- ggpredict(
+  compmodel.intslope, 
+  terms = c('stimulus [x_prediction_sequence]','treatment'),
+  type='fixed', # can also be random
+  ci.lvl = 0.95, # 1- alpha (usually 0.05) level of confidence intervals
                    ) 
-predz %>% plot()
+predz %>% plot(colors=c("blue","black","orange"))
 ```
 
 > I don't know what's going on with the correlation of fixed effects or the fixed effects.
@@ -210,21 +215,109 @@ Don't worry so much about the correlations. That is literally telling you if the
 The values out of the fix effects are *contrasts* contrasted against the default situation, which is the intercept (decided by the order of your factor levels). To get other values, you add the effects; e.g. to get the response in relation to stimulus with the valve stimulus, you can get. Again, you can compare to the panel above.
 
 ```{r}
-plot(X,y_control,main='Response to stimuli',col="red",xlim=c(-1,0.2))
-lines(X,y_control,col="red")
+plot(X,y_control,main='Response to stimuli',col="blue",xlim=c(-1,0.2))
+lines(X,y_control,col="blue")
 
 y_valve <- pnorm( (fixed[2] + fixed[6])*X + (fixed[1] + fixed[4]) )
-points(X,y_valve,col="green")
-lines(X,y_valve,col="green")
+points(X,y_valve,col="orange")
+lines(X,y_valve,col="orange")
 
 y_girdle <- pnorm( (fixed[2] + fixed[5])*X + (fixed[1] + fixed[3]) )
-points(X,y_girdle,col="blue")
-lines(X,y_girdle,col="blue")
+points(X,y_girdle,col="black")
+lines(X,y_girdle,col="black")
 
 abline(v=0,col="grey")
 ```
 
 I made the primitive plot above so that you can see how the fancier plot is made. The fancier plot also includes the measures of error. 
+
+
+### Building the graph with predz and means of each
+
+
+
+```{r}
+controlpredz <- subset(predz, group == "Control")
+girdlepredz <- subset(predz, group == "Girdle")
+valvepredz <- subset(predz, group == "Valve")
+
+xgirdle <- girdlepredz$x
+ygirdle <- girdlepredz$predicted
+girdlemin <- girdlepredz$conf.low
+girdlemax <- girdlepredz$conf.high
+xmgirdle <- c(-0.97,-0.96,-0.9,-0.73,-0.52,-0.26,-0.03,0) # stimulus treatments. Girdle has an extra one -0.73 compared to the others.
+ymgirdle <- c(0.95986622, 0.81012658, 0.77021277, 0.66530612, 0.52343750, 0.17241379, 0.02348993, 0.01672241) #mean response rates
+
+xvalve <-valvepredz$x
+yvalve <- valvepredz$predicted
+valvemin <- valvepredz$conf.low
+valvemax <- valvepredz$conf.high
+xmvalve <- c(-0.97,-0.96, -0.9,-0.52, -0.26, -0.03, 0)
+ymvalve <- c(0.97765363,0.91304348,0.88554217,0.86206897, 0.75428571, 0.10169492, 0.05555556)
+
+xwhole <- controlpredz$x
+ywhole <- controlpredz$predicted
+wholemin <- controlpredz$conf.low
+wholemax <- controlpredz$conf.high
+xmwhole <-c(-0.97, -0.96, -0.9, -0.52, -0.26, -0.03, 0) 
+ymwhole <- c(0.96111111, 0.98333333, 0.97777778, 0.95555556, 0.96111111, 0.36111111, 0.03333333)
+```
+
+
+
+
+```{r}
+ggplot() + 
+  geom_line(data = girdlepredz, aes(xgirdle,ygirdle), colour = "black", size = 1) + 
+  geom_ribbon(aes(x = xgirdle, y=ygirdle,ymin=girdlemin, ymax=girdlemax),
+              linetype=2, alpha=0.1, fill = "black") +
+  geom_point(aes(x = xmgirdle, y = ymgirdle), colour = "black", size = 3, pch=0) +
+  geom_vline(aes(xintercept = -0.574), colour = "black") +
+  geom_line(data = valvepredz, aes(xvalve,yvalve), colour = "orange", size = 1) +
+  geom_point(aes(x = xmvalve, y = ymvalve), colour = "orange", size = 3, pch=1) +
+  geom_ribbon(aes(x = xvalve, y=yvalve,ymin=valvemin, ymax=valvemax),
+              linetype=2, alpha=0.1, fill = "orange") +
+  geom_vline(aes(xintercept = -0.206), colour = "orange") +
+  geom_line(data = controlpredz, aes(xwhole,ywhole), colour = "blue", size = 1) +
+  geom_point(aes(x = xmwhole, y = ymwhole), colour = "blue", size = 3, pch=2) +
+  geom_ribbon(aes(x = xwhole, y=ywhole,ymin=wholemin, ymax=wholemax),
+              linetype=2, alpha=0.1, fill = "blue") +
+  geom_vline(aes(xintercept = -0.134), colour = "blue") +
+  theme_classic() + labs(x = "Weber Contrast") + 
+  scale_y_continuous("Predicted Shadow Responses",
+                     sec.axis = sec_axis(~ . * 100,
+                                         name = "Shadow Responses Elicited (%)"))
+```
+
+
+### Why the data are more extreme than the predictions?
+
+Well done on the plot. It is not unheard of for some of the raw data points to be more extreme than the predictions. There are several reasons for this. 
+
+* The shaded range for each is a 95% confidence interval for the fitted line. You can change the *alpha* of the confidence interval above using the ci.lvl attribute in ggpredict to anything you want, though 0.95 is conventional. Values would therefore be expected to exceed this range 95% of the time.
+
+* The model should correspond to the data but should not recapitulate it perfectly - otherwise there would be no point running a model - you would just plot the raw data. While the raw data are in a way more *real*, the model has something the raw data lack: The likelihood function (in this case, the binomial distribution) which corresponds to how the data were made and understands what is likely and what is not.
+
+* Specifically, this plot of the model and the set of predictions used is based only on the *fixed* effects and leaves out the *random* effects, which include the variation explained by individual differences. Having random effects in your model leads to *shrinkage* and more certain estimates by trusting less the more extreme values and more extreme individuals (or other such groups). You can also make predictions with the random effects in, which is sometimes called the prediction interval. The prediction interval will necessarily be wider because it includes this extra variation. Unfortunately, ggpredict throws an error and will not let me plot prediction intervals for this model (by setting type="random"). Commonly, we leave this out because we are not usually interested in these specific chitons but rather the population of all chitons. The raw data, however, includes this extra variation that you have taken out and will be more extreme. Ideally, you would have an extra pair of lines showing the prediction interval that would include more of the data proportions.
+
+* I have so far talked about non-systemic fluctuations away from the fitted line in either direction - but you definitely have a systemic difference, in that the highest proportions for each treatment - corresponding to the more salient stimuli - fall below the model. This means that actually there is a lapse rate for the chitons: A rate at which the chitons fail even with a really clear stimulus.  You can estimate this rate by getting the success proportion for each treatment with the most salient stimulus (-0.95 Weber contrast) - it appears to be 0.05 in each case. (It may be lower in the case of the girdle where the most salient stimulus level conflicts slightly with the three next most salient stimulus levels - unless they have some weird preference for specific contrast levels this looks to me to be at least partly just random variation). You have too options here: You can explain that your model is slightly askew because of this lapse (and therefore the *true *threshold may be at a slightly more negative value than the fitted line) or you can introduce an upper asymptote to consider the lapse rate.  
+
+### A few other changes
+
+* I made the range of the plot along the x-axis wider. It now includes values outside the range of your measurements, which (in the case of values of stimulus above 0) do not correspond to the real world but do tell you how the model *thinks*.
+
+* I changed Weber__'s__ to *Weber*
+
+* I made the other plot's colours correspond.
+
+* I changed the appearance of the raw data points using pch so you can see all of those for the girdle.
+
+### Notes
+
+* You will need to add a legend to the plot at some point
+
+* Consider continuing to use this Rmardown format to run your code (you add R code chunks with Ctrl + Alt + I). It allows you to mix code, text and figures in one go and can easily be made into a conventient document by pressing Crtl + Shift + K or the knit button above. It is easy to follow for anyone who wants to read it which is good for reproducibility and to learn from. It's also simpler for me : )
+
 
 
 
