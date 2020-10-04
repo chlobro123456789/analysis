@@ -1,0 +1,228 @@
+---
+title: "looming"
+author: "Chloe Brown"
+date: "04/10/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+I have three sets of data here. The first is looming which compares an expanding black circle on white background with an expanding white circle on grey background. The second compares an expanding black circle on white background (positive control) with two stimuli with an even intensity as the two circles expand. The third set of data compiles both experiments into one. The two experiments were done several months apart.
+
+
+setwd('C:/Users/chloe/Desktop/Masters/stats/Looming/')
+
+
+
+```{r}
+library(sciplot)
+library(multcomp)
+library(ade4)
+library(vegan)
+library(ggplot2)
+library('tidyverse')
+library(lme4)
+library('AICcmodavg')
+```
+
+
+```{r}
+#for first experiment with just black and white circles
+looming <- read_csv("chitonlooming_checked.csv")
+looming$stimulus <- as.factor(looming$stimulus)
+looming$chiton <- as.factor(looming$chiton)
+looming$length <- as.factor(looming$length)
+
+str(looming)
+```
+
+```{r}
+#barplot
+mean.countlooming <- tapply(looming$response, list(looming$stimulus), mean)
+mean.countlooming
+sd.count <- tapply(looming$response, list(looming$stimulus), sd)
+sd.count
+n.count <- tapply(looming$response, list(looming$stimulus), length)
+n.count
+se.count <- sd.count/sqrt(n.count)
+se.count
+barplot(mean.countlooming, ylim = c(0,1), xlab = "Stimulus", ylab = "Shadow Responses Elicited (%)")
+mids <- barplot(mean.countlooming, ylim = c(0,1), xlab = "Stimulus", ylab = "Shadow Responses Elicited (%)")
+arrows(mids, mean.countlooming-se.count, mids, mean.countlooming+se.count,code = 3, angle = 90, length = 0.1)
+
+#ggplot
+ggplot(looming, aes(x=stimulus, y=response)) + geom_violin() + labs(x="Stimulus", y = "Responses Elicited") #John recommended a violin plot.
+```
+
+
+```{r}
+#for second experiment with even intensity stimuli and black circle
+loomingeven <- read.csv("looming_even.csv", header = T, sep = ",")
+loomingeven$stimulus <- as.factor(loomingeven$stimulus)
+loomingeven$chiton <- as.factor(loomingeven$chiton)
+loomingeven$length <- as.factor(loomingeven$length)
+str(loomingeven)
+```
+Even black is a black circle on white background that expands to a lighter one on a white background.
+Even background is a white circle on a grey background expanding to a grey circle on a white background.
+
+Also I don't know why there's so many empty columns.
+```{r}
+#barplot
+mean.count.even <- tapply(loomingeven$response, list(loomingeven$stimulus), mean)
+mean.count.even
+sd.count <- tapply(loomingeven$response, list(loomingeven$stimulus), sd)
+sd.count
+n.count <- tapply(loomingeven$response, list(loomingeven$stimulus), length)
+n.count
+se.count <- sd.count/sqrt(n.count)
+se.count
+barplot(mean.count.even, ylim = c(0,1), xlab = "stimulus", ylab = "percent responded")
+mids <- barplot(mean.count.even, ylim = c(0,1), xlab = "stimulus", ylab = "Response")
+arrows (mids, mean.count.even-se.count, mids, mean.count.even+se.count,code = 3, angle = 90, length = 0.1)
+
+
+#ggplot
+ggplot(loomingeven, aes(x=stimulus, y=response)) + geom_violin() + labs(x="Stimulus", y = "Responses Elicited") #John recommended a violin plot.
+```
+
+
+
+```{r}
+### models for just looming even
+evenmodel <-glmer(response ~ stimulus + (1|chiton) + (1|length), data = loomingeven, family = binomial(),      
+                  control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
+                                         optCtrl = list(method = "nlminb", starttests = FALSE)))  
+summary(evenmodel)
+```
+
+The model was affected by individuals so added different into evenmodel.slope
+
+```{r}
+
+##### a null model
+evenmodel.null <-glmer(response ~ 1 + (1|chiton) + (1|length), data = loomingeven, family = binomial(),                             control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
+                                              optCtrl = list(method = "nlminb", starttests = FALSE)))  #  
+
+anova(evenmodel,evenmodel.null)
+```
+There's an error code here that I cannot seem to make go away that works with the evenmodel. 
+'convergence code 1 from optimx'
+
+
+```{r}
+#adding diff slope for chitons.
+evenmodel.slope <-glmer(response ~ stimulus + (1+stimulus|chiton) + (1+stimulus|length), data = loomingeven, family = binomial(),      
+                  control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
+                                         optCtrl = list(method = "nlminb", starttests = FALSE)))
+summary(evenmodel.slope)
+
+```
+#I think from this I can conclude that the biggest effect of individual is on the positive control ("black"), but also has an impact on even background,compared with even black. Length slightly affects the responses of even black, but not much impact on +ive control or even background. 
+
+#fixed effects - the stimulus impacts the responses for all treatments.
+
+```{r}
+#comparison of models
+
+anova(evenmodel, evenmodel.slope)
+
+models <- list(evenmodel, evenmodel.slope)
+model.names <- c('evenmodel', 'evenmodel.slope')
+aictab(cand.set = models, modnames = model.names)
+
+summary(glht(evenmodel, mcp(stimulus="Tukey")))
+```
+#the model without including (1+stimulus| ) is best because it carries 100% of explanation.
+
+#from the Tukey's I can say that the responses of each treatment significantly differ from each other.
+
+
+
+
+
+```{r}
+##combination of looming even and looming in one csv
+
+loomingcomb <- read.csv("looming_comb.csv", header = T, sep = ",")
+loomingcomb$stimulus <- as.factor(loomingcomb$stimulus)
+loomingcomb$chiton <- as.factor(loomingcomb$chiton)
+loomingcomb$length <- as.factor(loomingcomb$length)
+loomingcomb$experiment <-as.factor(loomingcomb$experiment)
+
+str(loomingcomb)
+```
+
+
+```{r}
+mean.count <- tapply(loomingcomb$response, list(loomingcomb$stimulus), mean)
+mean.count
+sd.count <- tapply(loomingcomb$response, list(loomingcomb$stimulus), sd)
+sd.count
+n.count <- tapply(loomingcomb$response, list(loomingcomb$stimulus), length)
+n.count
+se.count <- sd.count/sqrt(n.count)
+se.count
+barplot(mean.count, ylim = c(0,1), xlab = "stimulus", ylab = "percent responded") #combines both black responses
+mids <- barplot(mean.count, ylim = c(0,1), xlab = "stimulus", ylab = "Response")
+arrows (mids, mean.count-se.count, mids, mean.count+se.count,code = 3, angle = 90, length = 0.1)
+bargraph.CI(stimulus, response, group = experiment, legend=T, data=loomingcomb, ylim=c(0,1), xlab = "Stimulus", ylab = "Response") #tp see black responses separately.
+
+
+
+
+#ggplot
+ggplot(loomingcomb, aes(x=stimulus, y=response, fill = experiment)) + geom_violin() + labs(x="Stimulus", y = "Responses Elicited") #John recommended a violin plot.
+```
+
+
+```{r}
+########## LME4 Analysis  ###########
+loomingmodel.5<- glmer(response ~ stimulus + experiment + (1|chiton) + (1|length), data = loomingcomb, family = binomial("logit"),      
+                    control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
+                                           optCtrl = list(method = "nlminb", starttests = FALSE)))  
+
+
+
+
+loomingmodel.3 <-glmer(response ~ experiment + (1|chiton) + (1|length), data = loomingcomb, family = binomial(), 
+                       control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
+                                              optCtrl = list(method = "nlminb", starttests = FALSE)))
+
+
+
+
+loomingmodel.0 <-glmer(response ~ 1  + (1|chiton) + (1|length), data = loomingcomb, family = binomial(), 
+                    control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
+                                           optCtrl = list(method = "nlminb", starttests = FALSE)))
+
+
+
+
+loomingmodel.int <-glmer(response ~ stimulus*experiment  + (1|chiton) + (1|length), data = loomingcomb, family = binomial(), 
+                      control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
+                                             optCtrl = list(method = "nlminb", starttests = FALSE)))
+
+
+
+
+loomingmodel.intslope <-glmer(response ~ stimulus*experiment  + (1+stimulus|chiton) + (1+stimulus|length), data = loomingcomb, family = binomial(), 
+                           control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
+                                                  optCtrl = list(method = "nlminb", starttests = FALSE))) 
+
+models <- list(loomingmodel.5, loomingmodel.3,loomingmodel.0, loomingmodel.intslope)
+model.names <- c('loomingmodel.5', 'loomingmodel.3','loomingmodel.0', 'loomingmodel.intslope')
+aictab(cand.set = models, modnames = model.names)
+summary(glht(loomingmodel.5, mcp(stimulus="Tukey")))
+```
+#I'm not entirely sure that the two .int models worked because of an error, I presume it's because there's not responses for both experiments. Maybe if I explain why I tried to compare them. I wanted to see if the response rate across the black condition (the only stimulus in BOTH treatments) is the same for both experiments. So I've made all these modes because I wasn't actually sure how to do it.
+
+
+#Also from the Tukey's of loomingmodel.5 (AIC declared the best), There's a significant difference between all treatments, apart form the white circle and even background. I'm not sure if there's a problem with the black condition because it's not yet determined whether the two experiments had an effect on the responses to a plain black expanding circle.
+
+
+
+#I think its fair to say chitons do have a looming response and perhaps they responded less the to even background condition because it was darker. 
+
