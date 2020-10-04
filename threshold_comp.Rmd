@@ -232,14 +232,12 @@ abline(v=0,col="grey")
 I made the primitive plot above so that you can see how the fancier plot is made. The fancier plot also includes the measures of error. 
 
 
+
 ### Building the graph with predz and means of each
 
 
 
 ```{r}
-controlpredz <- subset(predz, group == "Control")
-girdlepredz <- subset(predz, group == "Girdle")
-valvepredz <- subset(predz, group == "Valve")
 
 xgirdle <- girdlepredz$x
 ygirdle <- girdlepredz$predicted
@@ -266,6 +264,8 @@ ymwhole <- c(0.96111111, 0.98333333, 0.97777778, 0.95555556, 0.96111111, 0.36111
 
 
 
+
+
 ```{r}
 ggplot() + 
   geom_line(data = girdlepredz, aes(xgirdle,ygirdle), colour = "black", size = 1) + 
@@ -283,6 +283,152 @@ ggplot() +
   geom_ribbon(aes(x = xwhole, y=ywhole,ymin=wholemin, ymax=wholemax),
               linetype=2, alpha=0.1, fill = "blue") +
   geom_vline(aes(xintercept = -0.134), colour = "blue") +
+  theme_classic() + labs(x = "Weber Contrast") + 
+  scale_y_continuous("Predicted Shadow Responses",
+                     sec.axis = sec_axis(~ . * 100,
+                                         name = "Shadow Responses Elicited (%)"))
+
+```
+
+
+
+
+```{r}
+################# to try and fix the lapse rate - had an effect on girdle but little on valve.
+nowhole<- filter(nowhole, stimulus>-0.97)
+nowhole$treatment    <- as.factor(nowhole$treatment)
+nowhole$size         <- as.factor(nowhole$size)
+nowhole$individual   <- as.factor(nowhole$individual)
+nowhole$response     <- as.factor(nowhole$response)
+str(nowhole)
+
+compmodel.intslope2 <-glmer(
+  response ~ stimulus*treatment  + (1+stimulus|individual) + (1+stimulus|length) + (1|stim_order),
+  data = nowhole, family = binomial(),
+  control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
+                         optCtrl = list(method = "nlminb", starttests = FALSE))) 
+
+compmodel.intslope2
+
+
+fixed2 <- fixef(compmodel.intslope2) 
+fixed2
+X  <- seq(from=-1,to=0.2,by=.02)
+y_control2 <- pnorm( fixed2[2]*X + fixed2[1])
+plot(X,y_control2,main='Whole (control) stimulus')
+lines(X,y_control2)
+
+x_prediction_sequence <- seq(from=-1, to=0.2, by= 0.005)
+
+predz2 <- ggpredict(
+  compmodel.intslope2, 
+  terms = c('stimulus [x_prediction_sequence]','treatment'),
+  type='fixed', # can also be random
+  ci.lvl = 0.95, # 1- alpha (usually 0.05) level of confidence intervals
+) 
+predz2 %>% plot(colors=c("blue","black","orange"))
+```
+
+
+
+
+```{r}
+controlpredz2 <- subset(predz2, group == "Control")
+girdlepredz2 <- subset(predz2, group == "Girdle")
+valvepredz2 <- subset(predz2, group == "Valve")
+```
+New data frames for each treatment.
+
+```{r}
+#control
+derivative_control = c(diff(controlpredz2$predicted) / diff(controlpredz2$x), 0)
+find.df.control <- cbind.data.frame(controlpredz2$x,derivative_control)
+ggplot(find.df.control, aes(controlpredz2$x, derivative_control)) + geom_line()
+max_deriv_control <- which(derivative_control==min(derivative_control))
+inflection_pt_control <- controlpredz2$x[max_deriv_control]
+inflection_pt_control
+
+#girdle
+derivative_girdle = c(diff(girdlepredz2$predicted) / diff(girdlepredz2$x), 0)
+find.df.girdle <- cbind.data.frame(girdlepredz2$x,derivative_girdle)
+ggplot(find.df.girdle, aes(girdlepredz2$x, derivative_girdle)) + geom_line()
+max_deriv_girdle <- which(derivative_girdle==min(derivative_girdle))
+inflection_pt_girdle <- girdlepredz2$x[max_deriv_girdle]
+inflection_pt_girdle
+
+
+#valve
+derivative_valve = c(diff(valvepredz2$predicted) / diff(valvepredz2$x), 0)
+find.df.valve <- cbind.data.frame(valvepredz2$x,derivative_valve)
+ggplot(find.df.valve, aes(valvepredz2$x, derivative_valve)) + geom_line()
+max_deriv_valve <- which(derivative_valve==min(derivative_valve))
+inflection_pt_valve <- valvepredz2$x[max_deriv_valve]
+inflection_pt_valve
+```
+The threshold for each treatment.
+
+whole = -0.11
+girdle = -0.556
+valve = -0.22
+
+
+
+```{r}
+#######plotting graph without whole in all treatments (-0.97)
+
+plot(X,y_control2,main='Response to stimuli',col="blue",xlim=c(-1,0.2))
+lines(X,y_control2,col="blue")
+
+y_valve2 <- pnorm( (fixed2[2] + fixed2[6])*X + (fixed2[1] + fixed2[4]) )
+points(X,y_valve2,col="orange")
+lines(X,y_valve2,col="orange")
+
+y_girdle2 <- pnorm( (fixed2[2] + fixed2[5])*X + (fixed2[1] + fixed2[3]) )
+points(X,y_girdle2,col="black")
+lines(X,y_girdle2,col="black")
+
+
+controlpredz2 <- subset(predz2, group == "Control")
+girdlepredz2 <- subset(predz2, group == "Girdle")
+valvepredz2 <- subset(predz2, group == "Valve")
+
+xgirdle2 <- girdlepredz2$x
+ygirdle2 <- girdlepredz2$predicted
+girdlemin2 <- girdlepredz2$conf.low
+girdlemax2 <- girdlepredz2$conf.high
+xmgirdle <- c(-0.97,-0.96,-0.9,-0.73,-0.52,-0.26,-0.03,0) # stimulus treatments. Girdle has an extra one -0.73 compared to the others.
+ymgirdle <- c(0.95986622, 0.81012658, 0.77021277, 0.66530612, 0.52343750, 0.17241379, 0.02348993, 0.01672241) #mean response rates
+
+xvalve2 <-valvepredz2$x
+yvalve2 <- valvepredz2$predicted
+valvemin2 <- valvepredz2$conf.low
+valvemax2 <- valvepredz2$conf.high
+xmvalve <- c(-0.97,-0.96, -0.9,-0.52, -0.26, -0.03, 0)
+ymvalve <- c(0.97765363,0.91304348,0.88554217,0.86206897, 0.75428571, 0.10169492, 0.05555556)
+
+xwhole2 <- controlpredz2$x
+ywhole2 <- controlpredz2$predicted
+wholemin2 <- controlpredz2$conf.low
+wholemax2 <- controlpredz2$conf.high
+xmwhole <-c(-0.97, -0.96, -0.9, -0.52, -0.26, -0.03, 0) 
+ymwhole <- c(0.96111111, 0.98333333, 0.97777778, 0.95555556, 0.96111111, 0.36111111, 0.03333333)
+
+ggplot() + 
+  geom_line(data = girdlepredz2, aes(xgirdle2,ygirdle2), colour = "black", size = 1) + 
+  geom_ribbon(aes(x = xgirdle2, y=ygirdle2,ymin=girdlemin2, ymax=girdlemax2),
+              linetype=2, alpha=0.1, fill = "black") +
+  geom_point(aes(x = xmgirdle, y = ymgirdle), colour = "black", size = 3, pch=0) +
+  geom_vline(aes(xintercept = inflection_pt_girdle), colour = "black") +
+  geom_line(data = valvepredz2, aes(xvalve2,yvalve2), colour = "orange", size = 1) +
+  geom_point(aes(x = xmvalve, y = ymvalve), colour = "orange", size = 3, pch=1) +
+  geom_ribbon(aes(x = xvalve2, y=yvalve2,ymin=valvemin2, ymax=valvemax2),
+              linetype=2, alpha=0.1, fill = "orange") +
+  geom_vline(aes(xintercept = inflection_pt_valve), colour = "orange") +
+  geom_line(data = controlpredz2, aes(xwhole2,ywhole2), colour = "blue", size = 1) +
+  geom_point(aes(x = xmwhole, y = ymwhole), colour = "blue", size = 3, pch=2) +
+  geom_ribbon(aes(x = xwhole2, y=ywhole2,ymin=wholemin2, ymax=wholemax2),
+              linetype=2, alpha=0.1, fill = "blue") +
+  geom_vline(aes(xintercept = inflection_pt_control), colour = "blue") +
   theme_classic() + labs(x = "Weber Contrast") + 
   scale_y_continuous("Predicted Shadow Responses",
                      sec.axis = sec_axis(~ . * 100,
@@ -319,5 +465,56 @@ Well done on the plot. It is not unheard of for some of the raw data points to b
 * Consider continuing to use this Rmardown format to run your code (you add R code chunks with Ctrl + Alt + I). It allows you to mix code, text and figures in one go and can easily be made into a conventient document by pressing Crtl + Shift + K or the knit button above. It is easy to follow for anyone who wants to read it which is good for reproducibility and to learn from. It's also simpler for me : )
 
 
+```{r}
+######## adding random effects to plot
+
+
+predz3 <- ggpredict(
+  compmodel.intslope2, 
+  terms = c('stimulus [x_prediction_sequence]','treatment'),
+  type='re', # can also be random
+  ci.lvl = 0.95, # 1- alpha (usually 0.05) level of confidence intervals
+) 
+
+
+
+controlpredz3 <- subset(predz3, group == "Control")
+girdlepredz3 <- subset(predz3, group == "Girdle")
+valvepredz3 <- subset(predz3, group == "Valve")
+
+xgirdle3 <-girdlepredz3$x
+ygirdle3 <-girdlepredz3$predicted
+xvalve3 <-valvepredz3$x
+yvalve3 <-valvepredz3$predicted
+
+xwhole3 <-controlpredz3$x
+ywhole3 <-controlpredz3$predicted
+
+ggplot() + 
+  geom_line(data = girdlepredz2, aes(xgirdle2,ygirdle2), colour = "black", size = 0.5) + 
+  geom_ribbon(aes(x = xgirdle2, y=ygirdle2,ymin=girdlemin2, ymax=girdlemax2),
+              linetype=2, alpha=0.1, fill = "black") +
+  geom_line(data=girdlepredz3, aes(xgirdle3,ygirdle3), colour = "black", size = 3, linetype = "dashed") +
+  geom_point(aes(x = xmgirdle, y = ymgirdle), colour = "black", size = 3, pch=0) +
+  geom_vline(aes(xintercept = -0.59), colour = "black") +
+  geom_line(data = girdlepredz2, aes(xvalve2,yvalve2), colour = "orange", size = 0.5) + 
+  geom_ribbon(aes(x = xvalve2, y=yvalve2,ymin=valvemin2, ymax=valvemax2),
+              linetype=2, alpha=0.1, fill = "orange") +
+  geom_line(data=valvepredz3, aes(xvalve3,yvalve3), colour = "orange", size = 3, linetype = "dashed") +
+  geom_point(aes(x = xmvalve, y = ymvalve), colour = "orange", size = 3, pch=1) +
+  geom_vline(aes(xintercept = -0.206), colour = "orange") +
+  geom_line(data = controlpredz2, aes(xwhole2,ywhole2), colour = "blue", size = 0.5) +
+  geom_point(aes(x = xmwhole, y = ymwhole), colour = "blue", size = 3, pch=2) +
+  geom_ribbon(aes(x = xwhole2, y=ywhole2,ymin=wholemin2, ymax=wholemax2),
+              linetype=2, alpha=0.1, fill = "blue") +
+  geom_line(data=controlpredz3, aes(xwhole3,ywhole3), colour = "blue", size = 3, linetype = "dashed") +
+  geom_vline(aes(xintercept = -0.134), colour = "blue") +
+  theme_classic() + labs(x = "Weber Contrast") + 
+  scale_y_continuous("Predicted Shadow Responses",
+                     sec.axis = sec_axis(~ . * 100,
+                                         name = "Shadow Responses Elicited (%)"))
+
+
+```
 
 

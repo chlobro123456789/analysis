@@ -27,6 +27,8 @@ library('ggeffects')
 
 ```{r}
 thresholdgirdle <- read_csv("thresholdgirdle.csv")
+thresholdgirdle <- filter(thresholdgirdle, stimulus>-0.97)
+
 str(thresholdgirdle)
 ```
 
