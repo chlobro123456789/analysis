@@ -33,7 +33,7 @@ library('AICcmodavg')
 looming <- read_csv("chitonlooming_checked.csv")
 looming$stimulus <- as.factor(looming$stimulus)
 looming$chiton <- as.factor(looming$chiton)
-looming$length <- as.factor(looming$length)
+#looming$length <- as.factor(looming$length)
 
 str(looming)
 ```
@@ -62,7 +62,7 @@ ggplot(looming, aes(x=stimulus, y=response)) + geom_violin() + labs(x="Stimulus"
 loomingeven <- read.csv("looming_even.csv", header = T, sep = ",")
 loomingeven$stimulus <- as.factor(loomingeven$stimulus)
 loomingeven$chiton <- as.factor(loomingeven$chiton)
-loomingeven$length <- as.factor(loomingeven$length)
+#loomingeven$length <- as.factor(loomingeven$length)
 str(loomingeven)
 ```
 Even black is a black circle on white background that expands to a lighter one on a white background.
@@ -85,7 +85,7 @@ arrows (mids, mean.count.even-se.count, mids, mean.count.even+se.count,code = 3,
 
 
 #ggplot
-ggplot(loomingeven, aes(x=stimulus, y=response)) + geom_violin() + labs(x="Stimulus", y = "Responses Elicited") #John recommended a violin plot.
+#ggplot(loomingeven, aes(x=stimulus, y=response)) + geom_violin() + labs(x="Stimulus", y = "Responses Elicited") #John recommended a violin plot.
 ```
 
 
@@ -120,7 +120,8 @@ evenmodel.slope <-glmer(response ~ stimulus + (1+stimulus|chiton) + (1+stimulus|
 summary(evenmodel.slope)
 
 ```
-#I think from this I can conclude that the biggest effect of individual is on the positive control ("black"), but also has an impact on even background,compared with even black. Length slightly affects the responses of even black, but not much impact on +ive control or even background. 
+
+I think from this I can conclude that the biggest effect of individual is on the positive control ("black"), but also has an impact on even background,compared with even black. Length slightly affects the responses of even black, but not much impact on +ive control or even background. 
 
 #fixed effects - the stimulus impacts the responses for all treatments.
 
@@ -135,12 +136,13 @@ aictab(cand.set = models, modnames = model.names)
 
 summary(glht(evenmodel, mcp(stimulus="Tukey")))
 ```
-#the model without including (1+stimulus| ) is best because it carries 100% of explanation.
+> the model without including (1+stimulus| ) is best because it carries 100% of explanation.
 
-#from the Tukey's I can say that the responses of each treatment significantly differ from each other.
+I don't understand this comment
 
+> from the Tukey's I can say that the responses of each treatment significantly differ from each other.
 
-
+Ok, the LRTs in the summary above say this also.
 
 
 ```{r}
@@ -217,12 +219,134 @@ model.names <- c('loomingmodel.5', 'loomingmodel.3','loomingmodel.0', 'loomingmo
 aictab(cand.set = models, modnames = model.names)
 summary(glht(loomingmodel.5, mcp(stimulus="Tukey")))
 ```
-#I'm not entirely sure that the two .int models worked because of an error, I presume it's because there's not responses for both experiments. Maybe if I explain why I tried to compare them. I wanted to see if the response rate across the black condition (the only stimulus in BOTH treatments) is the same for both experiments. So I've made all these modes because I wasn't actually sure how to do it.
+> I'm not entirely sure that the two .int models worked because of an error, I presume it's because there's not responses for both experiments. Maybe if I explain why I tried to compare them. I wanted to see if the response rate across the black condition (the only stimulus in BOTH treatments) is the same for both experiments. So I've made all these modes because I wasn't actually sure how to do it.
 
 
-#Also from the Tukey's of loomingmodel.5 (AIC declared the best), There's a significant difference between all treatments, apart form the white circle and even background. I'm not sure if there's a problem with the black condition because it's not yet determined whether the two experiments had an effect on the responses to a plain black expanding circle.
+> Also from the Tukey's of loomingmodel.5 (AIC declared the best), There's a significant difference between all treatments, apart form the white circle and even background. I'm not sure if there's a problem with the black condition because it's not yet determined whether the two experiments had an effect on the responses to a plain black expanding circle.
 
 
 
-#I think its fair to say chitons do have a looming response and perhaps they responded less the to even background condition because it was darker. 
+> I think its fair to say chitons do have a looming response and perhaps they responded less the to even background condition because it was darker. 
+
+
+
+### NOTES
+
+Well done on doing all this. If I have understand correctly, then the *looming even* experiment is your main experiment and the *checked* experiment is more like controls. I think you can just use a single csv file to store the data - as you have with looming.csv. Then, you can use commands like filter to quickly pick out data, e.g. 
+
+```{r}
+loomingcomb %>%
+  filter(experiment=="even") %>% droplevels -> looming_even_example
+looming_even_example %>% head(4)
+```
+Or similar commands or sub-setting to make new dataframes. Having multiple files can be confusing. 
+
+
+I see that in the *even* experiment you have the three different experiments you mention, and one other:
+
+```{r}
+levels(looming_even_example$stimulus[looming_even_example$experiment=="even"])
+```
+
+Could you:
+
+* remove spaces within names? - replace them with underscores
+* clarify what each of these are? Is white a neg control and black the pos control? Ideally, the names would be self-explanatory but I get that this is not always possible : )
+
+In the checked experiment - was the reason for white on grey just to have enough light to film?
+
+There are empty columns with one dataset because of how excel made the csv. You can go to the file in excel and delete the adjacent empty columns and make it again. Or you can open the file in R and replace all instances of ,,,,,,,, with nothing, as I have done. (Or remove this file, as I have suggested above.)
+
+Btw, in markdown files (like this) you don't need to precede text with hashes except in code chunks. It only reads R in the R chunks. Elsewhere it uses the markdown language, which is similar to html. Text is just text, but proceeding it with hashes makes headings of different sizes - one hash makes a huge title : ) 
+
+As the per the other set of experiments, length can't go in as a random effect without introducing a complicated Gaussian process. I would visualize the effect with summary statistics perhaps or try including it in a model version as a fixed effect but otherwise exclude it from the modelling. For example:
+
+
+```{r}
+loomingmodel.example <- glmer(response ~ stimulus * length + (1|chiton),
+                              data = loomingeven, family = binomial("logit"),      
+                    control = glmerControl(
+                      optimizer = "optimx", calc.derivs = FALSE,
+                                           optCtrl = list(method = "nlminb", starttests = FALSE)))  
+
+loomingmodel.example2 <- glmer(response ~ stimulus + length + (1|chiton),
+                              data = loomingeven, family = binomial("logit"),      
+                    control = glmerControl(
+                      optimizer = "optimx", calc.derivs = FALSE,
+                                           optCtrl = list(method = "nlminb", starttests = FALSE)))  
+
+loomingmodel.example3 <- glmer(response ~ stimulus + (1|chiton),
+                              data = loomingeven, family = binomial("logit"),      
+                    control = glmerControl(
+                      optimizer = "optimx", calc.derivs = FALSE,
+                                           optCtrl = list(method = "nlminb", starttests = FALSE)))  
+
+anova(loomingmodel.example,loomingmodel.example2,loomingmodel.example3)
+```
+
+The version which ignores length is best. 
+
+```{r}
+summary(loomingmodel.example3)
+```
+
+> I think from this I can conclude that the biggest effect of individual is on the positive control ("black"), but also has an impact on even background,compared with even black. Length slightly affects the responses of even black, but not much impact on +ive control or even background. 
+
+So, the black (intercept) control has an enormous impact
+
+```{r}
+ex_fixef <- fixef(loomingmodel.example3)
+print(paste0(round(pnorm(ex_fixef[1])*100,2),"%"))
+```
+
+Whereas, this treatment (Even background) - I'm not quite sure what it is - elicits a response half the time
+
+```{r}
+ex_fixef <- fixef(loomingmodel.example3)
+print(paste0(round(pnorm(ex_fixef[1]+ex_fixef[2])*100,2),"%"))
+```
+
+And the other most of the time
+
+```{r}
+ex_fixef <- fixef(loomingmodel.example3)
+print(paste0(round(pnorm(ex_fixef[1]+ex_fixef[3])*100,2),"%"))
+```
+
+> There's an error code here that I cannot seem to make go away that works with the evenmodel.
+'convergence code 1 from optimx'
+ 
+ I dunno. Perhaps has difficulty converging. 
+
+Btw, John no longer recommends a violin plot for the summary stats. You can take that out if you like. 
+
+
+### Models
+
+I think that you can regard the *first* experiments as controls of the second experiment and wrap them together into models without a *stimulus* fixed effect. From what I can see you have the same individuals in each: 
+
+```{r}
+levels(loomingcomb$chiton[loomingcomb$experiment=='even'])
+levels(loomingcomb$chiton[loomingcomb$experiment=='first'])
+```
+
+This would leave you with something more like:
+
+```{r}
+loomingmodel.example4 <- glmer(
+  response ~ stimulus + (1|chiton),
+  data = loomingcomb, family = binomial("logit"),      
+  control = glmerControl(
+  optimizer = "optimx", calc.derivs = FALSE,
+  optCtrl = list(method = "nlminb", starttests = FALSE)))  
+
+summary(loomingmodel.example4)
+```
+
+This gives you both a positive and a negative control.
+
+```{r}
+library(ggeffects)
+ggpredict(loomingmodel.example4,'stimulus') %>% plot()
+```
 
