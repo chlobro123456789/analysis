@@ -1,1001 +1,1001 @@
 chiton,length,stimulus,response,experiment
-1,11,Black,1,first
-1,11,Black,1,first
 1,11,White,1,first
 1,11,White,0,first
-1,11,Black,1,first
 1,11,White,0,first
 1,11,White,0,first
-1,11,Black,1,first
 1,11,White,1,first
-1,11,Black,1,first
 2,4,White,0,first
 2,4,White,0,first
-2,4,Black,0,first
 2,4,White,1,first
-2,4,Black,1,first
 2,4,White,1,first
-2,4,Black,1,first
 2,4,White,1,first
-2,4,Black,1,first
-2,4,Black,1,first
-3,9,Black,1,first
 3,9,White,0,first
-3,9,Black,1,first
-3,9,Black,1,first
-3,9,Black,1,first
 3,9,White,1,first
-3,9,Black,1,first
 3,9,White,0,first
 3,9,White,0,first
 3,9,White,0,first
-4,9,Black,1,first
-4,9,Black,1,first
 4,9,White,0,first
 4,9,White,0,first
 4,9,White,0,first
-4,9,Black,1,first
-4,9,Black,1,first
 4,9,White,1,first
-4,9,Black,1,first
 4,9,White,0,first
 5,6,White,0,first
 5,6,White,0,first
-5,6,Black,1,first
-5,6,Black,1,first
-5,6,Black,1,first
-5,6,White,0,first
-5,6,Black,1,first
 5,6,White,0,first
 5,6,White,0,first
-5,6,Black,1,first
+5,6,White,0,first
 6,6,White,0,first
 6,6,White,0,first
-6,6,Black,0,first
-6,6,Black,1,first
 6,6,White,0,first
-6,6,Black,1,first
-6,6,Black,1,first
 6,6,White,0,first
-6,6,Black,0,first
 6,6,White,0,first
-7,5,Black,1,first
-7,5,White,0,first
-7,5,Black,1,first
 7,5,White,0,first
 7,5,White,0,first
-7,5,Black,0,first
-7,5,Black,1,first
-7,5,Black,1,first
 7,5,White,0,first
 7,5,White,0,first
-8,6,Black,1,first
-8,6,Black,1,first
-8,6,Black,1,first
+7,5,White,0,first
 8,6,White,0,first
 8,6,White,1,first
-8,6,Black,0,first
-8,6,Black,1,first
 8,6,White,1,first
 8,6,White,0,first
 8,6,White,0,first
 9,8,White,0,first
 9,8,White,0,first
-9,8,Black,1,first
 9,8,White,0,first
-9,8,Black,1,first
-9,8,Black,1,first
 9,8,White,0,first
 9,8,White,1,first
-9,8,Black,1,first
-9,8,Black,1,first
 10,7,White,0,first
-10,7,Black,1,first
-10,7,Black,1,first
 10,7,White,0,first
-10,7,Black,1,first
-10,7,Black,0,first
-10,7,Black,0,first
 10,7,White,0,first
 10,7,White,1,first
 10,7,White,0,first
 11,4,White,0,first
 11,4,White,0,first
-11,4,Black,1,first
-11,4,Black,1,first
-11,4,White,0,first
-11,4,Black,1,first
-11,4,Black,1,first
 11,4,White,0,first
 11,4,White,0,first
-11,4,Black,1,first
+11,4,White,0,first
 12,10,White,0,first
-12,10,Black,1,first
 12,10,White,0,first
-12,10,Black,1,first
-12,10,Black,1,first
-12,10,Black,1,first
 12,10,White,1,first
 12,10,White,0,first
 12,10,White,0,first
-12,10,Black,1,first
 13,6,White,1,first
-13,6,Black,1,first
 13,6,White,0,first
 13,6,White,0,first
 13,6,White,0,first
-13,6,Black,1,first
-13,6,Black,1,first
-13,6,Black,1,first
 13,6,White,1,first
-13,6,Black,1,first
 14,7,White,0,first
-14,7,Black,1,first
 14,7,White,1,first
 14,7,White,0,first
-14,7,Black,1,first
-14,7,Black,1,first
-14,7,Black,1,first
 14,7,White,1,first
 14,7,White,0,first
-14,7,Black,1,first
 15,6,White,0,first
 15,6,White,0,first
 15,6,White,0,first
-15,6,Black,1,first
-15,6,Black,1,first
 15,6,White,0,first
 15,6,White,0,first
-15,6,Black,1,first
-15,6,Black,1,first
-15,6,Black,1,first
-16,7,Black,0,first
-16,7,Black,1,first
 16,7,White,0,first
 16,7,White,0,first
 16,7,White,0,first
 16,7,White,0,first
-16,7,Black,1,first
-16,7,Black,1,first
 16,7,White,0,first
-16,7,Black,1,first
-17,5,Black,1,first
-17,5,Black,1,first
 17,5,White,0,first
-17,5,Black,1,first
 17,5,White,1,first
-17,5,Black,0,first
 17,5,White,0,first
-17,5,Black,1,first
 17,5,White,0,first
 17,5,White,0,first
 18,8,White,0,first
-18,8,Black,0,first
-18,8,Black,1,first
-18,8,Black,1,first
-18,8,Black,0,first
 18,8,White,0,first
 18,8,White,0,first
 18,8,White,0,first
-18,8,Black,0,first
 18,8,White,0,first
-19,9,Black,1,first
-19,9,Black,1,first
-19,9,White,0,first
-19,9,Black,1,first
 19,9,White,0,first
 19,9,White,0,first
 19,9,White,0,first
-19,9,Black,1,first
 19,9,White,0,first
-19,9,Black,1,first
-20,12,Black,1,first
+19,9,White,0,first
 20,12,White,0,first
-20,12,Black,1,first
 20,12,White,0,first
-20,12,Black,1,first
-20,12,Black,1,first
-20,12,Black,1,first
-20,12,Black,1,first
 20,12,White,0,first
 20,12,White,0,first
 21,7,White,0,first
 21,7,White,0,first
-21,7,Black,1,first
 21,7,White,0,first
-21,7,Black,1,first
 21,7,White,0,first
-21,7,Black,1,first
-21,7,Black,1,first
-21,7,Black,1,first
 21,7,White,0,first
 22,6,White,0,first
 22,6,White,0,first
-22,6,Black,1,first
-22,6,Black,1,first
-22,6,White,0,first
-22,6,Black,1,first
 22,6,White,0,first
 22,6,White,0,first
-22,6,Black,1,first
-22,6,Black,1,first
-23,8,Black,1,first
+22,6,White,0,first
 23,8,White,0,first
 23,8,White,0,first
 23,8,White,0,first
 23,8,White,0,first
 23,8,White,0,first
-23,8,Black,1,first
-23,8,Black,1,first
-23,8,Black,1,first
-23,8,Black,1,first
-24,6,Black,1,first
-24,6,Black,1,first
-24,6,Black,1,first
 24,6,White,0,first
 24,6,White,0,first
 24,6,White,0,first
-24,6,Black,1,first
 24,6,White,0,first
-24,6,Black,1,first
 24,6,White,0,first
-25,8,Black,1,first
-25,8,White,0,first
-25,8,Black,1,first
 25,8,White,0,first
 25,8,White,0,first
-25,8,Black,1,first
-25,8,Black,1,first
-25,8,Black,1,first
+25,8,White,0,first
 25,8,White,0,first
 25,8,White,0,first
 26,10,White,0,first
 26,10,White,1,first
-26,10,Black,1,first
-26,10,Black,1,first
-26,10,Black,1,first
-26,10,White,0,first
-26,10,Black,1,first
 26,10,White,0,first
 26,10,White,0,first
-26,10,Black,1,first
+26,10,White,0,first
 27,4,White,0,first
 27,4,White,0,first
 27,4,White,0,first
 27,4,White,0,first
 27,4,White,0,first
-27,4,Black,1,first
-27,4,Black,1,first
-27,4,Black,1,first
-27,4,Black,1,first
-27,4,Black,1,first
-28,8,Black,1,first
 28,8,White,0,first
 28,8,White,0,first
-28,8,Black,1,first
 28,8,White,0,first
 28,8,White,0,first
-28,8,Black,1,first
 28,8,White,1,first
-28,8,Black,1,first
-28,8,Black,1,first
-29,6,Black,1,first
-29,6,Black,1,first
-29,6,White,0,first
-29,6,Black,1,first
 29,6,White,0,first
 29,6,White,0,first
-29,6,Black,1,first
-29,6,Black,1,first
+29,6,White,0,first
 29,6,White,1,first
 29,6,White,0,first
 30,4,White,0,first
-30,4,Black,1,first
 30,4,White,0,first
-30,4,Black,1,first
 30,4,White,0,first
-30,4,Black,1,first
-30,4,Black,1,first
 30,4,White,1,first
-30,4,Black,0,first
 30,4,White,0,first
 31,10,White,0,first
-31,10,Black,1,first
-31,10,White,0,first
-31,10,Black,1,first
-31,10,White,0,first
-31,10,Black,1,first
-31,10,Black,1,first
 31,10,White,0,first
 31,10,White,0,first
-31,10,Black,1,first
-32,5,White,0,first
-32,5,Black,1,first
+31,10,White,0,first
+31,10,White,0,first
 32,5,White,0,first
 32,5,White,0,first
-32,5,Black,1,first
-32,5,Black,1,first
-32,5,Black,0,first
-32,5,Black,1,first
+32,5,White,0,first
 32,5,White,0,first
 32,5,White,0,first
 33,10,White,1,first
 33,10,White,0,first
 33,10,White,0,first
 33,10,White,0,first
-33,10,Black,1,first
-33,10,Black,1,first
-33,10,Black,1,first
-33,10,Black,1,first
-33,10,Black,1,first
 33,10,White,0,first
-34,8,Black,1,first
 34,8,White,0,first
-34,8,Black,1,first
 34,8,White,1,first
 34,8,White,0,first
-34,8,Black,1,first
-34,8,Black,1,first
-34,8,Black,1,first
 34,8,White,0,first
 34,8,White,0,first
 35,10,White,0,first
+35,10,White,0,first
+35,10,White,0,first
+35,10,White,0,first
+35,10,White,0,first
+36,14,White,0,first
+36,14,White,0,first
+36,14,White,0,first
+36,14,White,0,first
+36,14,White,0,first
+37,9,White,0,first
+37,9,White,0,first
+37,9,White,0,first
+37,9,White,0,first
+37,9,White,0,first
+38,7,White,0,first
+38,7,White,0,first
+38,7,White,0,first
+38,7,White,0,first
+38,7,White,0,first
+39,6,White,0,first
+39,6,White,1,first
+39,6,White,0,first
+39,6,White,0,first
+39,6,White,0,first
+40,13,White,0,first
+40,13,White,0,first
+40,13,White,0,first
+40,13,White,0,first
+40,13,White,0,first
+41,10,even_black,1,even
+41,10,even_black,1,even
+41,10,even_black,0,even
+41,10,even_black,1,even
+41,10,even_black,1,even
+42,11,even_black,0,even
+42,11,even_black,1,even
+42,11,even_black,0,even
+42,11,even_black,0,even
+42,11,even_black,1,even
+43,11,even_black,0,even
+43,11,even_black,1,even
+43,11,even_black,1,even
+43,11,even_black,1,even
+43,11,even_black,1,even
+44,10,even_black,1,even
+44,10,even_black,1,even
+44,10,even_black,1,even
+44,10,even_black,1,even
+44,10,even_black,1,even
+45,12,even_black,1,even
+45,12,even_black,1,even
+45,12,even_black,1,even
+45,12,even_black,1,even
+45,12,even_black,0,even
+46,6,even_black,1,even
+46,6,even_black,0,even
+46,6,even_black,0,even
+46,6,even_black,0,even
+46,6,even_black,0,even
+47,9,even_black,0,even
+47,9,even_black,1,even
+47,9,even_black,1,even
+47,9,even_black,0,even
+47,9,even_black,0,even
+49,4,even_black,0,even
+49,4,even_black,0,even
+49,4,even_black,1,even
+49,4,even_black,1,even
+49,4,even_black,0,even
+50,4,even_black,0,even
+50,4,even_black,1,even
+50,4,even_black,1,even
+50,4,even_black,1,even
+50,4,even_black,1,even
+51,10,even_black,1,even
+51,10,even_black,1,even
+51,10,even_black,1,even
+51,10,even_black,1,even
+51,10,even_black,1,even
+52,11,even_black,1,even
+52,11,even_black,1,even
+52,11,even_black,0,even
+52,11,even_black,1,even
+52,11,even_black,0,even
+53,10,even_black,0,even
+53,10,even_black,1,even
+53,10,even_black,1,even
+53,10,even_black,1,even
+53,10,even_black,1,even
+54,6,even_black,0,even
+54,6,even_black,0,even
+54,6,even_black,0,even
+54,6,even_black,1,even
+54,6,even_black,0,even
+55,5,even_black,1,even
+55,5,even_black,0,even
+55,5,even_black,0,even
+55,5,even_black,0,even
+55,5,even_black,1,even
+56,8,even_black,0,even
+56,8,even_black,1,even
+56,8,even_black,1,even
+56,8,even_black,1,even
+56,8,even_black,1,even
+57,8,even_black,1,even
+57,8,even_black,1,even
+57,8,even_black,1,even
+57,8,even_black,0,even
+57,8,even_black,1,even
+58,8,even_black,1,even
+58,8,even_black,1,even
+58,8,even_black,1,even
+58,8,even_black,1,even
+58,8,even_black,0,even
+59,10,even_black,1,even
+59,10,even_black,1,even
+59,10,even_black,1,even
+59,10,even_black,1,even
+59,10,even_black,1,even
+60,6,even_black,0,even
+60,6,even_black,0,even
+60,6,even_black,0,even
+60,6,even_black,1,even
+60,6,even_black,0,even
+61,9,even_black,1,even
+61,9,even_black,1,even
+61,9,even_black,1,even
+61,9,even_black,0,even
+61,9,even_black,1,even
+62,8,even_black,1,even
+62,8,even_black,0,even
+62,8,even_black,1,even
+62,8,even_black,1,even
+62,8,even_black,1,even
+63,7,even_black,1,even
+63,7,even_black,0,even
+63,7,even_black,1,even
+63,7,even_black,1,even
+63,7,even_black,0,even
+64,9,even_black,1,even
+64,9,even_black,1,even
+64,9,even_black,1,even
+64,9,even_black,0,even
+64,9,even_black,1,even
+65,11,even_black,0,even
+65,11,even_black,1,even
+65,11,even_black,0,even
+65,11,even_black,1,even
+65,11,even_black,1,even
+66,11,even_black,1,even
+66,11,even_black,1,even
+66,11,even_black,1,even
+66,11,even_black,1,even
+66,11,even_black,0,even
+67,8,even_black,1,even
+67,8,even_black,1,even
+67,8,even_black,1,even
+67,8,even_black,1,even
+67,8,even_black,1,even
+68,7,even_black,1,even
+68,7,even_black,1,even
+68,7,even_black,1,even
+68,7,even_black,1,even
+68,7,even_black,1,even
+69,11,even_black,1,even
+69,11,even_black,1,even
+69,11,even_black,1,even
+69,11,even_black,1,even
+69,11,even_black,1,even
+70,8,even_black,1,even
+70,8,even_black,1,even
+70,8,even_black,1,even
+70,8,even_black,0,even
+70,8,even_black,1,even
+71,4,even_black,1,even
+71,4,even_black,1,even
+71,4,even_black,0,even
+71,4,even_black,1,even
+71,4,even_black,1,even
+72,5,even_black,0,even
+72,5,even_black,1,even
+72,5,even_black,1,even
+72,5,even_black,1,even
+72,5,even_black,1,even
+73,9,even_black,1,even
+73,9,even_black,1,even
+73,9,even_black,1,even
+73,9,even_black,1,even
+73,9,even_black,1,even
+74,16,even_black,1,even
+74,16,even_black,1,even
+74,16,even_black,1,even
+74,16,even_black,1,even
+74,16,even_black,0,even
+75,8,even_black,0,even
+75,8,even_black,1,even
+75,8,even_black,1,even
+75,8,even_black,1,even
+75,8,even_black,0,even
+76,11,even_black,1,even
+76,11,even_black,1,even
+76,11,even_black,1,even
+76,11,even_black,1,even
+76,11,even_black,1,even
+78,10,even_black,0,even
+78,10,even_black,1,even
+78,10,even_black,1,even
+78,10,even_black,0,even
+78,10,even_black,0,even
+79,11,even_black,1,even
+79,11,even_black,1,even
+79,11,even_black,1,even
+79,11,even_black,0,even
+79,11,even_black,1,even
+80,6,even_black,1,even
+80,6,even_black,1,even
+80,6,even_black,1,even
+80,6,even_black,1,even
+80,6,even_black,0,even
+81,8,even_black,0,even
+81,8,even_black,0,even
+81,8,even_black,0,even
+81,8,even_black,0,even
+81,8,even_black,0,even
+82,11,even_black,1,even
+82,11,even_black,1,even
+82,11,even_black,1,even
+82,11,even_black,1,even
+82,11,even_black,1,even
+41,10,even_background,0,even
+41,10,even_background,0,even
+41,10,even_background,1,even
+41,10,even_background,1,even
+41,10,even_background,0,even
+42,11,even_background,0,even
+42,11,even_background,0,even
+42,11,even_background,0,even
+42,11,even_background,1,even
+42,11,even_background,0,even
+43,11,even_background,0,even
+43,11,even_background,1,even
+43,11,even_background,0,even
+43,11,even_background,0,even
+43,11,even_background,0,even
+44,10,even_background,1,even
+44,10,even_background,1,even
+44,10,even_background,1,even
+44,10,even_background,1,even
+44,10,even_background,1,even
+45,12,even_background,0,even
+45,12,even_background,0,even
+45,12,even_background,0,even
+45,12,even_background,1,even
+45,12,even_background,1,even
+46,6,even_background,1,even
+46,6,even_background,1,even
+46,6,even_background,0,even
+46,6,even_background,1,even
+46,6,even_background,1,even
+47,9,even_background,0,even
+47,9,even_background,0,even
+47,9,even_background,0,even
+47,9,even_background,0,even
+47,9,even_background,0,even
+49,4,even_background,1,even
+49,4,even_background,0,even
+49,4,even_background,1,even
+49,4,even_background,0,even
+49,4,even_background,1,even
+50,4,even_background,0,even
+50,4,even_background,1,even
+50,4,even_background,1,even
+50,4,even_background,1,even
+50,4,even_background,0,even
+51,10,even_background,0,even
+51,10,even_background,1,even
+51,10,even_background,1,even
+51,10,even_background,1,even
+51,10,even_background,1,even
+52,11,even_background,0,even
+52,11,even_background,1,even
+52,11,even_background,0,even
+52,11,even_background,0,even
+52,11,even_background,0,even
+53,10,even_background,0,even
+53,10,even_background,1,even
+53,10,even_background,0,even
+53,10,even_background,1,even
+53,10,even_background,1,even
+54,6,even_background,0,even
+54,6,even_background,0,even
+54,6,even_background,0,even
+54,6,even_background,0,even
+54,6,even_background,0,even
+55,5,even_background,1,even
+55,5,even_background,0,even
+55,5,even_background,1,even
+55,5,even_background,1,even
+55,5,even_background,1,even
+56,8,even_background,1,even
+56,8,even_background,1,even
+56,8,even_background,1,even
+56,8,even_background,1,even
+56,8,even_background,1,even
+57,8,even_background,1,even
+57,8,even_background,1,even
+57,8,even_background,1,even
+57,8,even_background,0,even
+57,8,even_background,0,even
+58,8,even_background,1,even
+58,8,even_background,1,even
+58,8,even_background,1,even
+58,8,even_background,0,even
+58,8,even_background,1,even
+59,10,even_background,0,even
+59,10,even_background,0,even
+59,10,even_background,0,even
+59,10,even_background,0,even
+59,10,even_background,0,even
+60,6,even_background,1,even
+60,6,even_background,0,even
+60,6,even_background,1,even
+60,6,even_background,1,even
+60,6,even_background,0,even
+61,9,even_background,1,even
+61,9,even_background,1,even
+61,9,even_background,1,even
+61,9,even_background,1,even
+61,9,even_background,1,even
+62,8,even_background,1,even
+62,8,even_background,0,even
+62,8,even_background,1,even
+62,8,even_background,0,even
+62,8,even_background,1,even
+63,7,even_background,0,even
+63,7,even_background,0,even
+63,7,even_background,0,even
+63,7,even_background,0,even
+63,7,even_background,1,even
+64,9,even_background,0,even
+64,9,even_background,1,even
+64,9,even_background,0,even
+64,9,even_background,0,even
+64,9,even_background,0,even
+65,11,even_background,0,even
+65,11,even_background,0,even
+65,11,even_background,0,even
+65,11,even_background,0,even
+65,11,even_background,0,even
+66,11,even_background,1,even
+66,11,even_background,0,even
+66,11,even_background,1,even
+66,11,even_background,1,even
+66,11,even_background,1,even
+67,8,even_background,1,even
+67,8,even_background,1,even
+67,8,even_background,1,even
+67,8,even_background,1,even
+67,8,even_background,0,even
+68,7,even_background,1,even
+68,7,even_background,1,even
+68,7,even_background,0,even
+68,7,even_background,1,even
+68,7,even_background,1,even
+69,11,even_background,1,even
+69,11,even_background,0,even
+69,11,even_background,0,even
+69,11,even_background,0,even
+69,11,even_background,1,even
+70,8,even_background,1,even
+70,8,even_background,1,even
+70,8,even_background,1,even
+70,8,even_background,0,even
+70,8,even_background,1,even
+71,4,even_background,1,even
+71,4,even_background,0,even
+71,4,even_background,0,even
+71,4,even_background,0,even
+71,4,even_background,1,even
+72,5,even_background,0,even
+72,5,even_background,1,even
+72,5,even_background,0,even
+72,5,even_background,0,even
+72,5,even_background,1,even
+73,9,even_background,1,even
+73,9,even_background,1,even
+73,9,even_background,1,even
+73,9,even_background,1,even
+73,9,even_background,1,even
+74,16,even_background,1,even
+74,16,even_background,1,even
+74,16,even_background,0,even
+74,16,even_background,0,even
+74,16,even_background,0,even
+75,8,even_background,1,even
+75,8,even_background,1,even
+75,8,even_background,0,even
+75,8,even_background,1,even
+75,8,even_background,0,even
+76,11,even_background,1,even
+76,11,even_background,0,even
+76,11,even_background,0,even
+76,11,even_background,0,even
+76,11,even_background,0,even
+78,10,even_background,0,even
+78,10,even_background,0,even
+78,10,even_background,0,even
+78,10,even_background,0,even
+78,10,even_background,0,even
+79,11,even_background,0,even
+79,11,even_background,1,even
+79,11,even_background,0,even
+79,11,even_background,0,even
+79,11,even_background,0,even
+80,6,even_background,1,even
+80,6,even_background,0,even
+80,6,even_background,0,even
+80,6,even_background,1,even
+80,6,even_background,0,even
+81,8,even_background,0,even
+81,8,even_background,0,even
+81,8,even_background,0,even
+81,8,even_background,0,even
+81,8,even_background,0,even
+82,11,even_background,1,even
+82,11,even_background,1,even
+82,11,even_background,1,even
+82,11,even_background,0,even
+82,11,even_background,1,even
+1,11,Black,1,first
+1,11,Black,1,first
+1,11,Black,1,first
+1,11,Black,1,first
+1,11,Black,1,first
+2,4,Black,0,first
+2,4,Black,1,first
+2,4,Black,1,first
+2,4,Black,1,first
+2,4,Black,1,first
+3,9,Black,1,first
+3,9,Black,1,first
+3,9,Black,1,first
+3,9,Black,1,first
+3,9,Black,1,first
+4,9,Black,1,first
+4,9,Black,1,first
+4,9,Black,1,first
+4,9,Black,1,first
+4,9,Black,1,first
+5,6,Black,1,first
+5,6,Black,1,first
+5,6,Black,1,first
+5,6,Black,1,first
+5,6,Black,1,first
+6,6,Black,0,first
+6,6,Black,1,first
+6,6,Black,1,first
+6,6,Black,1,first
+6,6,Black,0,first
+7,5,Black,1,first
+7,5,Black,1,first
+7,5,Black,0,first
+7,5,Black,1,first
+7,5,Black,1,first
+8,6,Black,1,first
+8,6,Black,1,first
+8,6,Black,1,first
+8,6,Black,0,first
+8,6,Black,1,first
+9,8,Black,1,first
+9,8,Black,1,first
+9,8,Black,1,first
+9,8,Black,1,first
+9,8,Black,1,first
+10,7,Black,1,first
+10,7,Black,1,first
+10,7,Black,1,first
+10,7,Black,0,first
+10,7,Black,0,first
+11,4,Black,1,first
+11,4,Black,1,first
+11,4,Black,1,first
+11,4,Black,1,first
+11,4,Black,1,first
+12,10,Black,1,first
+12,10,Black,1,first
+12,10,Black,1,first
+12,10,Black,1,first
+12,10,Black,1,first
+13,6,Black,1,first
+13,6,Black,1,first
+13,6,Black,1,first
+13,6,Black,1,first
+13,6,Black,1,first
+14,7,Black,1,first
+14,7,Black,1,first
+14,7,Black,1,first
+14,7,Black,1,first
+14,7,Black,1,first
+15,6,Black,1,first
+15,6,Black,1,first
+15,6,Black,1,first
+15,6,Black,1,first
+15,6,Black,1,first
+16,7,Black,0,first
+16,7,Black,1,first
+16,7,Black,1,first
+16,7,Black,1,first
+16,7,Black,1,first
+17,5,Black,1,first
+17,5,Black,1,first
+17,5,Black,1,first
+17,5,Black,0,first
+17,5,Black,1,first
+18,8,Black,0,first
+18,8,Black,1,first
+18,8,Black,1,first
+18,8,Black,0,first
+18,8,Black,0,first
+19,9,Black,1,first
+19,9,Black,1,first
+19,9,Black,1,first
+19,9,Black,1,first
+19,9,Black,1,first
+20,12,Black,1,first
+20,12,Black,1,first
+20,12,Black,1,first
+20,12,Black,1,first
+20,12,Black,1,first
+20,12,Black,1,first
+21,7,Black,1,first
+21,7,Black,1,first
+21,7,Black,1,first
+21,7,Black,1,first
+21,7,Black,1,first
+22,6,Black,1,first
+22,6,Black,1,first
+22,6,Black,1,first
+22,6,Black,1,first
+22,6,Black,1,first
+23,8,Black,1,first
+23,8,Black,1,first
+23,8,Black,1,first
+23,8,Black,1,first
+23,8,Black,1,first
+24,6,Black,1,first
+24,6,Black,1,first
+24,6,Black,1,first
+24,6,Black,1,first
+24,6,Black,1,first
+25,8,Black,1,first
+25,8,Black,1,first
+25,8,Black,1,first
+25,8,Black,1,first
+25,8,Black,1,first
+26,10,Black,1,first
+26,10,Black,1,first
+26,10,Black,1,first
+26,10,Black,1,first
+26,10,Black,1,first
+27,4,Black,1,first
+27,4,Black,1,first
+27,4,Black,1,first
+27,4,Black,1,first
+27,4,Black,1,first
+28,8,Black,1,first
+28,8,Black,1,first
+28,8,Black,1,first
+28,8,Black,1,first
+28,8,Black,1,first
+29,6,Black,1,first
+29,6,Black,1,first
+29,6,Black,1,first
+29,6,Black,1,first
+29,6,Black,1,first
+30,4,Black,1,first
+30,4,Black,1,first
+30,4,Black,1,first
+30,4,Black,1,first
+30,4,Black,0,first
+31,10,Black,1,first
+31,10,Black,1,first
+31,10,Black,1,first
+31,10,Black,1,first
+31,10,Black,1,first
+32,5,Black,1,first
+32,5,Black,1,first
+32,5,Black,1,first
+32,5,Black,0,first
+32,5,Black,1,first
+33,10,Black,1,first
+33,10,Black,1,first
+33,10,Black,1,first
+33,10,Black,1,first
+33,10,Black,1,first
+34,8,Black,1,first
+34,8,Black,1,first
+34,8,Black,1,first
+34,8,Black,1,first
+34,8,Black,1,first
 35,10,Black,1,first
-35,10,White,0,first
 35,10,Black,0,first
 35,10,Black,1,first
-35,10,White,0,first
 35,10,Black,1,first
-35,10,White,0,first
-35,10,White,0,first
 35,10,Black,1,first
 36,14,Black,1,first
-36,14,White,0,first
 36,14,Black,1,first
 36,14,Black,1,first
-36,14,White,0,first
 36,14,Black,1,first
-36,14,White,0,first
 36,14,Black,1,first
-36,14,White,0,first
-36,14,White,0,first
-37,9,Black,1,first
-37,9,White,0,first
-37,9,White,0,first
-37,9,Black,1,first
-37,9,White,0,first
-37,9,White,0,first
-37,9,White,0,first
 37,9,Black,1,first
 37,9,Black,1,first
 37,9,Black,1,first
-38,7,White,0,first
-38,7,White,0,first
-38,7,Black,1,first
-38,7,White,0,first
-38,7,White,0,first
+37,9,Black,1,first
+37,9,Black,1,first
 38,7,Black,1,first
 38,7,Black,1,first
-38,7,White,0,first
+38,7,Black,1,first
 38,7,Black,1,first
 38,7,Black,1,first
 39,6,Black,1,first
 39,6,Black,1,first
 39,6,Black,1,first
 39,6,Black,0,first
-39,6,White,0,first
-39,6,White,1,first
-39,6,White,0,first
-39,6,White,0,first
 39,6,Black,1,first
-39,6,White,0,first
-40,13,White,0,first
-40,13,White,0,first
 40,13,Black,1,first
 40,13,Black,1,first
 40,13,Black,1,first
-40,13,White,0,first
-40,13,White,0,first
-40,13,White,0,first
 40,13,Black,1,first
 40,13,Black,1,first
-41,10,Even Background,0,even
-41,10,Black,1,even
-41,10,Even Background,0,even
 41,10,Black,1,even
 41,10,Black,1,even
 41,10,Black,1,even
-41,10,Even Background,1,even
-41,10,Even Background,1,even
-41,10,Even Background,0,even
 41,10,Black,1,even
-41,10,Even Black,1,even
-41,10,Even Black,1,even
-41,10,Even Black,0,even
-41,10,Even Black,1,even
-41,10,Even Black,1,even
-42,11,Even Background,0,even
-42,11,Even Background,0,even
-42,11,Even Background,0,even
+41,10,Black,1,even
 42,11,Black,1,even
 42,11,Black,1,even
 42,11,Black,0,even
-42,11,Even Background,1,even
 42,11,Black,1,even
 42,11,Black,1,even
-42,11,Even Background,0,even
-42,11,Even Black,0,even
-42,11,Even Black,1,even
-42,11,Even Black,0,even
-42,11,Even Black,0,even
-42,11,Even Black,1,even
 43,11,Black,1,even
-43,11,Even Background,0,even
 43,11,Black,1,even
-43,11,Even Background,1,even
-43,11,Even Background,0,even
 43,11,Black,1,even
-43,11,Even Background,0,even
-43,11,Even Background,0,even
 43,11,Black,1,even
 43,11,Black,0,even
-43,11,Even Black,0,even
-43,11,Even Black,1,even
-43,11,Even Black,1,even
-43,11,Even Black,1,even
-43,11,Even Black,1,even
-44,10,Even Background,1,even
-44,10,Black,1,even
-44,10,Even Background,1,even
-44,10,Black,1,even
-44,10,Even Background,1,even
-44,10,Black,1,even
-44,10,Even Background,1,even
 44,10,Black,1,even
 44,10,Black,1,even
-44,10,Even Background,1,even
-44,10,Even Black,1,even
-44,10,Even Black,1,even
-44,10,Even Black,1,even
-44,10,Even Black,1,even
-44,10,Even Black,1,even
-45,12,Black,1,even
-45,12,Even Background,0,even
+44,10,Black,1,even
+44,10,Black,1,even
+44,10,Black,1,even
 45,12,Black,1,even
 45,12,Black,1,even
 45,12,Black,1,even
-45,12,Even Background,0,even
-45,12,Even Background,0,even
-45,12,Even Background,1,even
-45,12,Even Background,1,even
 45,12,Black,1,even
-45,12,Even Black,1,even
-45,12,Even Black,1,even
-45,12,Even Black,1,even
-45,12,Even Black,1,even
-45,12,Even Black,0,even
-46,6,Even Background,1,even
-46,6,Even Black,1,even
+45,12,Black,1,even
 46,6,Black,1,even
 46,6,Black,1,even
-46,6,Even Black,0,even
 46,6,Black,1,even
 46,6,Black,1,even
-46,6,Even Background,1,even
-46,6,Even Black,0,even
-46,6,Even Background,0,even
-46,6,Even Black,0,even
-46,6,Even Background,1,even
 46,6,Black,1,even
-46,6,Even Background,1,even
-46,6,Even Black,0,even
 47,9,Black,0,even
-47,9,Even Black,0,even
-47,9,Black,1,even
-47,9,Even Background,0,even
-47,9,Even Black,1,even
-47,9,Even Background,0,even
-47,9,Black,1,even
-47,9,Even Black,1,even
 47,9,Black,1,even
 47,9,Black,1,even
-47,9,Even Background,0,even
-47,9,Even Black,0,even
-47,9,Even Background,0,even
-47,9,Even Background,0,even
-47,9,Even Black,0,even
-49,4,Even Black,0,even
-49,4,Even Background,1,even
-49,4,Even Background,0,even
-49,4,Even Background,1,even
+47,9,Black,1,even
+47,9,Black,1,even
 49,4,Black,1,even
-49,4,Even Black,0,even
-49,4,Even Background,0,even
-49,4,Even Black,1,even
 49,4,Black,1,even
 49,4,Black,1,even
 49,4,Black,0,even
-49,4,Even Black,1,even
 49,4,Black,1,even
-49,4,Even Black,0,even
-49,4,Even Background,1,even
-50,4,Even Background,0,even
 50,4,Black,1,even
-50,4,Even Black,0,even
-50,4,Even Background,1,even
 50,4,Black,1,even
-50,4,Even Black,1,even
 50,4,Black,1,even
-50,4,Even Black,1,even
-50,4,Even Background,1,even
-50,4,Even Black,1,even
 50,4,Black,1,even
-50,4,Even Black,1,even
-50,4,Even Background,1,even
-50,4,Even Background,0,even
 50,4,Black,1,even
-51,10,Even Black,1,even
-51,10,Even Background,0,even
-51,10,Even Background,1,even
 51,10,Black,1,even
 51,10,Black,1,even
-51,10,Even Background,1,even
 51,10,Black,1,even
-51,10,Even Black,1,even
-51,10,Even Background,1,even
 51,10,Black,1,even
-51,10,Even Black,1,even
 51,10,Black,1,even
-51,10,Even Background,1,even
-51,10,Even Black,1,even
-51,10,Even Black,1,even
-52,11,Black,1,even
-52,11,Even Black,1,even
-52,11,Even Background,0,even
-52,11,Black,1,even
-52,11,Even Background,1,even
-52,11,Even Black,1,even
 52,11,Black,1,even
 52,11,Black,1,even
-52,11,Even Background,0,even
-52,11,Even Black,0,even
-52,11,Even Background,0,even
-52,11,Even Background,0,even
 52,11,Black,1,even
-52,11,Even Black,1,even
-52,11,Even Black,0,even
-53,10,Even Background,0,even
-53,10,Black,1,even
-53,10,Even Background,1,even
-53,10,Even Background,0,even
-53,10,Even Black,0,even
-53,10,Even Black,1,even
+52,11,Black,1,even
+52,11,Black,1,even
 53,10,Black,1,even
 53,10,Black,1,even
-53,10,Even Black,1,even
 53,10,Black,1,even
 53,10,Black,1,even
-53,10,Even Black,1,even
-53,10,Even Background,1,even
-53,10,Even Background,1,even
-53,10,Even Black,1,even
+53,10,Black,1,even
 54,6,Black,1,even
-54,6,Even Background,0,even
 54,6,Black,1,even
-54,6,Even Background,0,even
-54,6,Even Black,0,even
 54,6,Black,1,even
-54,6,Even Black,0,even
-54,6,Even Background,0,even
 54,6,Black,1,even
-54,6,Even Black,0,even
 54,6,Black,1,even
-54,6,Even Background,0,even
-54,6,Even Black,1,even
-54,6,Even Background,0,even
-54,6,Even Black,0,even
-55,5,Even Black,1,even
-55,5,Even Background,1,even
-55,5,Even Background,0,even
-55,5,Even Black,0,even
-55,5,Black,1,even
-55,5,Even Background,1,even
-55,5,Black,1,even
-55,5,Even Black,0,even
-55,5,Black,1,even
-55,5,Even Background,1,even
-55,5,Even Background,1,even
-55,5,Even Black,0,even
-55,5,Even Black,1,even
 55,5,Black,1,even
 55,5,Black,1,even
-56,8,Even Black,0,even
-56,8,Even Black,1,even
+55,5,Black,1,even
+55,5,Black,1,even
+55,5,Black,1,even
 56,8,Black,1,even
-56,8,Even Black,1,even
 56,8,Black,1,even
-56,8,Even Background,1,even
 56,8,Black,1,even
-56,8,Even Background,1,even
 56,8,Black,1,even
-56,8,Even Background,1,even
-56,8,Even Black,1,even
-56,8,Even Background,1,even
-56,8,Even Background,1,even
-56,8,Even Black,1,even
 56,8,Black,1,even
-57,8,Even Background,1,even
-57,8,Even Background,1,even
-57,8,Black,1,even
-57,8,Even Background,1,even
-57,8,Even Black,1,even
-57,8,Even Black,1,even
 57,8,Black,1,even
 57,8,Black,1,even
 57,8,Black,1,even
 57,8,Black,1,even
-57,8,Even Black,1,even
-57,8,Even Background,0,even
-57,8,Even Background,0,even
-57,8,Even Black,0,even
-57,8,Even Black,1,even
-58,8,Even Background,1,even
-58,8,Even Black,1,even
-58,8,Even Background,1,even
+57,8,Black,1,even
 58,8,Black,1,even
-58,8,Even Black,1,even
-58,8,Even Background,1,even
-58,8,Even Black,1,even
-58,8,Even Background,0,even
-58,8,Even Background,1,even
 58,8,Black,1,even
-58,8,Even Black,1,even
 58,8,Black,0,even
-58,8,Even Black,0,even
 58,8,Black,1,even
 58,8,Black,1,even
-59,10,Even Background,0,even
-59,10,Even Background,0,even
-59,10,Even Background,0,even
-59,10,Black,1,even
-59,10,Even Black,1,even
-59,10,Black,1,even
-59,10,Even Background,0,even
-59,10,Even Black,1,even
-59,10,Black,1,even
-59,10,Even Background,0,even
 59,10,Black,1,even
 59,10,Black,1,even
-59,10,Even Black,1,even
-59,10,Even Black,1,even
-59,10,Even Black,1,even
-60,6,Even Black,0,even
-60,6,Even Black,0,even
-60,6,Even Black,0,even
+59,10,Black,1,even
+59,10,Black,1,even
+59,10,Black,1,even
 60,6,Black,1,even
 60,6,Black,1,even
-60,6,Even Black,1,even
-60,6,Even Background,1,even
 60,6,Black,1,even
-60,6,Even Background,0,even
 60,6,Black,1,even
-60,6,Even Background,1,even
-60,6,Even Background,1,even
-60,6,Even Black,0,even
-60,6,Even Background,0,even
 60,6,Black,1,even
 61,9,Black,1,even
-61,9,Even Background,1,even
-61,9,Even Background,1,even
-61,9,Even Black,1,even
-61,9,Even Black,1,even
-61,9,Even Background,1,even
-61,9,Even Black,1,even
-61,9,Even Black,0,even
-61,9,Even Background,1,even
 61,9,Black,1,even
 61,9,Black,1,even
-61,9,Even Black,1,even
 61,9,Black,1,even
 61,9,Black,1,even
-61,9,Even Background,1,even
 62,8,Black,1,even
 62,8,Black,1,even
-62,8,Even Black,1,even
-62,8,Even Black,0,even
-62,8,Even Background,1,even
-62,8,Even Background,0,even
 62,8,Black,1,even
-62,8,Even Black,1,even
-62,8,Even Background,1,even
-62,8,Even Background,0,even
 62,8,Black,1,even
-62,8,Even Black,1,even
-62,8,Even Background,1,even
-62,8,Even Black,1,even
 62,8,Black,1,even
 63,7,Black,1,even
-63,7,Even Black,1,even
-63,7,Even Black,0,even
-63,7,Even Background,0,even
-63,7,Even Black,1,even
 63,7,Black,0,even
 63,7,Black,1,even
 63,7,Black,1,even
-63,7,Even Background,0,even
 63,7,Black,1,even
-63,7,Even Background,0,even
-63,7,Even Black,1,even
-63,7,Even Background,0,even
-63,7,Even Black,0,even
-63,7,Even Background,1,even
-64,9,Even Background,0,even
-64,9,Black,1,even
-64,9,Even Black,1,even
 64,9,Black,1,even
 64,9,Black,1,even
-64,9,Even Black,1,even
-64,9,Even Background,1,even
 64,9,Black,1,even
-64,9,Even Background,0,even
-64,9,Even Black,1,even
-64,9,Even Background,0,even
-64,9,Even Black,0,even
-64,9,Even Background,0,even
 64,9,Black,1,even
-64,9,Even Black,1,even
-65,11,Even Black,0,even
-65,11,Even Black,1,even
-65,11,Even Background,0,even
-65,11,Even Background,0,even
-65,11,Black,1,even
-65,11,Even Background,0,even
+64,9,Black,1,even
 65,11,Black,1,even
 65,11,Black,1,even
-65,11,Even Black,0,even
 65,11,Black,1,even
 65,11,Black,1,even
-65,11,Even Background,0,even
-65,11,Even Background,0,even
-65,11,Even Black,1,even
-65,11,Even Black,1,even
-66,11,Even Background,1,even
-66,11,Even Background,0,even
+65,11,Black,1,even
 66,11,Black,1,even
-66,11,Even Black,1,even
-66,11,Even Black,1,even
 66,11,Black,1,even
-66,11,Even Background,1,even
 66,11,Black,1,even
-66,11,Even Black,1,even
-66,11,Even Black,1,even
-66,11,Even Background,1,even
 66,11,Black,1,even
-66,11,Even Background,1,even
-66,11,Even Black,0,even
 66,11,Black,1,even
-67,8,Even Background,1,even
-67,8,Even Black,1,even
 67,8,Black,1,even
-67,8,Even Black,1,even
-67,8,Even Black,1,even
 67,8,Black,1,even
-67,8,Even Black,1,even
 67,8,Black,1,even
-67,8,Even Background,1,even
-67,8,Even Background,1,even
 67,8,Black,1,even
-67,8,Even Background,1,even
-67,8,Even Black,1,even
-67,8,Even Background,0,even
 67,8,Black,1,even
-68,7,Even Black,1,even
-68,7,Even Black,1,even
-68,7,Even Background,1,even
-68,7,Even Black,1,even
-68,7,Even Background,1,even
-68,7,Black,1,even
-68,7,Even Background,0,even
-68,7,Even Background,1,even
-68,7,Even Background,1,even
-68,7,Even Black,1,even
 68,7,Black,1,even
 68,7,Black,1,even
 68,7,Black,1,even
 68,7,Black,1,even
-68,7,Even Black,1,even
-69,11,Black,1,even
-69,11,Even Black,1,even
-69,11,Even Black,1,even
-69,11,Even Black,1,even
-69,11,Black,1,even
-69,11,Even Background,1,even
-69,11,Even Black,1,even
-69,11,Even Background,0,even
-69,11,Even Background,0,even
-69,11,Black,1,even
-69,11,Even Background,0,even
-69,11,Even Background,1,even
-69,11,Even Black,1,even
+68,7,Black,1,even
 69,11,Black,1,even
 69,11,Black,1,even
-70,8,Even Background,1,even
-70,8,Even Background,1,even
-70,8,Even Black,1,even
-70,8,Even Black,1,even
-70,8,Even Background,1,even
-70,8,Even Background,0,even
-70,8,Even Black,1,even
-70,8,Even Black,0,even
-70,8,Black,1,even
-70,8,Even Black,1,even
+69,11,Black,1,even
+69,11,Black,1,even
+69,11,Black,1,even
 70,8,Black,1,even
 70,8,Black,1,even
 70,8,Black,1,even
-70,8,Even Background,1,even
+70,8,Black,1,even
 70,8,Black,1,even
 71,4,Black,1,even
-71,4,Even Black,1,even
 71,4,Black,1,even
-71,4,Even Black,1,even
-71,4,Even Background,1,even
-71,4,Even Black,0,even
-71,4,Even Black,1,even
-71,4,Even Black,1,even
-71,4,Even Background,0,even
-71,4,Even Background,0,even
-71,4,Even Background,0,even
 71,4,Black,1,even
-71,4,Even Background,1,even
 71,4,Black,1,even
 71,4,Black,1,even
 72,5,Black,1,even
 72,5,Black,1,even
-72,5,Even Black,0,even
-72,5,Even Black,1,even
 72,5,Black,1,even
-72,5,Even Background,0,even
 72,5,Black,1,even
-72,5,Even Black,1,even
-72,5,Even Black,1,even
-72,5,Even Background,1,even
-72,5,Even Background,0,even
 72,5,Black,1,even
-72,5,Even Background,0,even
-72,5,Even Black,1,even
-72,5,Even Background,1,even
 73,9,Black,1,even
-73,9,Even Background,1,even
-73,9,Even Background,1,even
-73,9,Even Background,1,even
-73,9,Even Background,1,even
 73,9,Black,1,even
-73,9,Even Background,1,even
 73,9,Black,1,even
-73,9,Even Black,1,even
 73,9,Black,1,even
-73,9,Even Black,1,even
-73,9,Even Black,1,even
 73,9,Black,1,even
-73,9,Even Black,1,even
-73,9,Even Black,1,even
-74,16,Black,1,even
-74,16,Even Black,1,even
-74,16,Even Background,1,even
-74,16,Black,1,even
-74,16,Even Background,1,even
-74,16,Even Black,1,even
-74,16,Even Black,1,even
-74,16,Even Background,0,even
-74,16,Even Background,0,even
-74,16,Even Black,1,even
-74,16,Even Background,0,even
-74,16,Even Black,0,even
 74,16,Black,1,even
 74,16,Black,1,even
 74,16,Black,1,even
-75,8,Even Black,0,even
-75,8,Even Black,1,even
-75,8,Even Background,1,even
+74,16,Black,1,even
+74,16,Black,1,even
 75,8,Black,1,even
-75,8,Even Background,1,even
-75,8,Even Background,0,even
 75,8,Black,1,even
-75,8,Even Background,1,even
-75,8,Even Black,1,even
 75,8,Black,1,even
-75,8,Even Black,1,even
 75,8,Black,1,even
-75,8,Even Black,0,even
 75,8,Black,1,even
-75,8,Even Background,0,even
-76,11,Even Background,1,even
 76,11,Black,1,even
 76,11,Black,1,even
-76,11,Even Black,1,even
 76,11,Black,1,even
-76,11,Even Background,0,even
-76,11,Even Black,1,even
 76,11,Black,1,even
-76,11,Even Background,0,even
-76,11,Even Background,0,even
 76,11,Black,1,even
-76,11,Even Black,1,even
-76,11,Even Black,1,even
-76,11,Even Black,1,even
-76,11,Even Background,0,even
-78,10,Even Black,0,even
-78,10,Black,1,even
-78,10,Even Black,1,even
-78,10,Even Black,1,even
-78,10,Black,1,even
-78,10,Even Background,0,even
-78,10,Even Black,0,even
-78,10,Even Background,0,even
 78,10,Black,1,even
 78,10,Black,1,even
-78,10,Even Background,0,even
-78,10,Even Background,0,even
-78,10,Even Black,0,even
-78,10,Even Background,0,even
+78,10,Black,1,even
+78,10,Black,1,even
 78,10,Black,1,even
 79,11,Black,1,even
-79,11,Even Black,1,even
-79,11,Even Background,0,even
-79,11,Even Background,1,even
-79,11,Even Black,1,even
-79,11,Even Black,1,even
-79,11,Even Background,0,even
-79,11,Even Black,0,even
-79,11,Black,1,even
-79,11,Even Background,0,even
 79,11,Black,1,even
 79,11,Black,1,even
 79,11,Black,1,even
-79,11,Even Background,0,even
-79,11,Even Black,1,even
-80,6,Even Black,1,even
+79,11,Black,1,even
 80,6,Black,1,even
 80,6,Black,1,even
-80,6,Even Black,1,even
-80,6,Even Black,1,even
-80,6,Even Black,1,even
-80,6,Even Background,1,even
-80,6,Even Background,0,even
 80,6,Black,1,even
-80,6,Even Background,0,even
-80,6,Even Black,0,even
 80,6,Black,1,even
-80,6,Even Background,1,even
-80,6,Even Background,0,even
 80,6,Black,1,even
-81,8,Even Background,0,even
-81,8,Even Background,0,even
-81,8,Even Black,0,even
 81,8,Black,1,even
 81,8,Black,1,even
-81,8,Even Black,0,even
-81,8,Even Black,0,even
-81,8,Even Background,0,even
-81,8,Even Background,0,even
-81,8,Even Black,0,even
 81,8,Black,1,even
 81,8,Black,1,even
-81,8,Even Black,0,even
 81,8,Black,0,even
-81,8,Even Background,0,even
 82,11,Black,1,even
-82,11,Even Background,1,even
-82,11,Even Black,1,even
-82,11,Even Background,1,even
-82,11,Even Black,1,even
-82,11,Even Black,1,even
-82,11,Even Black,1,even
-82,11,Even Black,1,even
 82,11,Black,1,even
-82,11,Even Background,1,even
 82,11,Black,1,even
-82,11,Even Background,0,even
 82,11,Black,1,even
-82,11,Even Background,1,even
 82,11,Black,1,even
