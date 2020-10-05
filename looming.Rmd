@@ -27,10 +27,18 @@ library(lme4)
 library('AICcmodavg')
 ```
 
+```{r}
+loomingcomb <- read_csv("looming_comb.csv")
+loomingcomb %>% filter(experiment=="first") %>% droplevels -> looming
+loomingcomb %>% filter(experiment=="even") %>% droplevels -> loomingeven
+```
+
+The way above has 600 rows for looming even instead of 630 in that csv. 
+
 
 ```{r}
 #for first experiment with just black and white circles
-looming <- read_csv("chitonlooming_checked.csv")
+#looming <- read_csv("chitonlooming_checked.csv")
 looming$stimulus <- as.factor(looming$stimulus)
 looming$chiton <- as.factor(looming$chiton)
 #looming$length <- as.factor(looming$length)
@@ -59,7 +67,7 @@ ggplot(looming, aes(x=stimulus, y=response)) + geom_violin() + labs(x="Stimulus"
 
 ```{r}
 #for second experiment with even intensity stimuli and black circle
-loomingeven <- read.csv("looming_even.csv", header = T, sep = ",")
+# loomingeven <- read.csv("looming_even.csv", header = T, sep = ",")
 loomingeven$stimulus <- as.factor(loomingeven$stimulus)
 loomingeven$chiton <- as.factor(loomingeven$chiton)
 #loomingeven$length <- as.factor(loomingeven$length)
@@ -92,7 +100,8 @@ arrows (mids, mean.count.even-se.count, mids, mean.count.even+se.count,code = 3,
 
 ```{r}
 ### models for just looming even
-evenmodel <-glmer(response ~ stimulus + (1|chiton) + (1|length), data = loomingeven, family = binomial(),      
+evenmodel <-glmer(response ~ stimulus + (1|chiton),# + (1|length),
+                  data = loomingeven, family = binomial(),      
                   control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
                                          optCtrl = list(method = "nlminb", starttests = FALSE)))  
 summary(evenmodel)
@@ -103,7 +112,8 @@ The model was affected by individuals so added different into evenmodel.slope
 ```{r}
 
 ##### a null model
-evenmodel.null <-glmer(response ~ 1 + (1|chiton) + (1|length), data = loomingeven, family = binomial(),                             control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
+evenmodel.null <-glmer(response ~ 1 + (1|chiton), # + (1|length)
+                       data = loomingeven, family = binomial(),                             control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
                                               optCtrl = list(method = "nlminb", starttests = FALSE)))  #  
 
 anova(evenmodel,evenmodel.null)
@@ -114,7 +124,8 @@ There's an error code here that I cannot seem to make go away that works with th
 
 ```{r}
 #adding diff slope for chitons.
-evenmodel.slope <-glmer(response ~ stimulus + (1+stimulus|chiton) + (1+stimulus|length), data = loomingeven, family = binomial(),      
+evenmodel.slope <-glmer(response ~ stimulus + (1+stimulus|chiton),# + (1+stimulus|length),
+                        data = loomingeven, family = binomial(),      
                   control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
                                          optCtrl = list(method = "nlminb", starttests = FALSE)))
 summary(evenmodel.slope)
@@ -148,10 +159,10 @@ Ok, the LRTs in the summary above say this also.
 ```{r}
 ##combination of looming even and looming in one csv
 
-loomingcomb <- read.csv("looming_comb.csv", header = T, sep = ",")
+#loomingcomb <- read.csv("looming_comb.csv", header = T, sep = ",")
 loomingcomb$stimulus <- as.factor(loomingcomb$stimulus)
 loomingcomb$chiton <- as.factor(loomingcomb$chiton)
-loomingcomb$length <- as.factor(loomingcomb$length)
+#loomingcomb$length <- as.factor(loomingcomb$length)
 loomingcomb$experiment <-as.factor(loomingcomb$experiment)
 
 str(loomingcomb)
@@ -182,35 +193,39 @@ ggplot(loomingcomb, aes(x=stimulus, y=response, fill = experiment)) + geom_violi
 
 ```{r}
 ########## LME4 Analysis  ###########
-loomingmodel.5<- glmer(response ~ stimulus + experiment + (1|chiton) + (1|length), data = loomingcomb, family = binomial("logit"),      
+loomingmodel.5<- glmer(response ~ stimulus + experiment + (1|chiton),# + (1|length),
+                       data = loomingcomb, family = binomial("logit"),      
                     control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
                                            optCtrl = list(method = "nlminb", starttests = FALSE)))  
 
 
-
-
-loomingmodel.3 <-glmer(response ~ experiment + (1|chiton) + (1|length), data = loomingcomb, family = binomial(), 
+loomingmodel.3 <-glmer(response ~ experiment + (1|chiton),# + (1|length), 
+                       data = loomingcomb, family = binomial(), 
                        control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
                                               optCtrl = list(method = "nlminb", starttests = FALSE)))
 
 
 
 
-loomingmodel.0 <-glmer(response ~ 1  + (1|chiton) + (1|length), data = loomingcomb, family = binomial(), 
+loomingmodel.0 <-glmer(response ~ 1  + (1|chiton),# + (1|length), 
+                       data = loomingcomb, family = binomial(), 
                     control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
                                            optCtrl = list(method = "nlminb", starttests = FALSE)))
 
 
 
 
-loomingmodel.int <-glmer(response ~ stimulus*experiment  + (1|chiton) + (1|length), data = loomingcomb, family = binomial(), 
+loomingmodel.int <-glmer(response ~ stimulus*experiment  + (1|chiton),# + (1|length), 
+                         data = loomingcomb, family = binomial(), 
                       control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
                                              optCtrl = list(method = "nlminb", starttests = FALSE)))
 
 
 
 
-loomingmodel.intslope <-glmer(response ~ stimulus*experiment  + (1+stimulus|chiton) + (1+stimulus|length), data = loomingcomb, family = binomial(), 
+loomingmodel.intslope <-glmer(response ~ stimulus*experiment  + (1+stimulus|chiton),
+                              # + (1+stimulus|length),
+                              data = loomingcomb, family = binomial(), 
                            control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
                                                   optCtrl = list(method = "nlminb", starttests = FALSE))) 
 
@@ -219,6 +234,7 @@ model.names <- c('loomingmodel.5', 'loomingmodel.3','loomingmodel.0', 'loomingmo
 aictab(cand.set = models, modnames = model.names)
 summary(glht(loomingmodel.5, mcp(stimulus="Tukey")))
 ```
+
 > I'm not entirely sure that the two .int models worked because of an error, I presume it's because there's not responses for both experiments. Maybe if I explain why I tried to compare them. I wanted to see if the response rate across the black condition (the only stimulus in BOTH treatments) is the same for both experiments. So I've made all these modes because I wasn't actually sure how to do it.
 
 
