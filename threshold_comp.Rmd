@@ -32,9 +32,19 @@ thresholdcomp$response     <- as.factor(thresholdcomp$response)
 str(thresholdcomp)
 ```
 
+# Identifying any crazy individuals
+```{r}
+thresholdcomp %>% group_by(individual) %>%
+  filter(stimulus==min(thresholdcomp$stimulus)) %>%
+  summarise(resp = sum(as.numeric(response)-1)/length(as.numeric(response)) ) %>%
+  arrange(resp) %>% head(20)
+```
 
-### Graphs
+24 would appear to be the single worst animal - having responded a quarter of the time with the clearest stimulus. I think you could justifiably exclude those animals which did not respond robustly to your positive control (e.g. those which responded less than 75% of the time). 
 
+
+
+# Graphs
 ```{r}
 stimmult <-thresholdcomp$response*100
 stimorder <-factor(thresholdcomp$stimulus, levels = unique(thresholdcomp$stimulus)) 
@@ -517,4 +527,64 @@ ggplot() +
 
 ```
 
+### Make plots for individuals
 
+So, since the individuals are nested within treatments rather than shared across them (a given individual is only measured for one experiment) we might check which individuals are used for each treatment and plot these. 
+
+#### Girdle animals
+
+```{r}
+set.seed(321)
+
+girdle_ind <- unique(droplevels(
+  thresholdcomp$individual[thresholdcomp$treatment=="Girdle"]))
+
+x_prediction_sequence <- seq(from=-1, to=0.2, by= 0.005)
+girdle_sample         <- as.character(sample(girdle_ind, 9))
+
+predz <- ggpredict(
+  compmodel.intslope, 
+  terms = c('stimulus [x_prediction_sequence]','individual [girdle_sample]'),
+  type='re', # can also be random
+  ci.lvl = 0.95, # 1- alpha (usually 0.05) level of confidence intervals
+                   ) 
+predz %>% plot() #colors=c("blue","black","orange")
+```
+
+#### Valve sample
+
+```{r}
+set.seed(161)
+x_prediction_sequence <- seq(from=-1, to=0.2, by= 0.005)
+
+valve_ind <- unique(droplevels(
+  thresholdcomp$individual[thresholdcomp$treatment=="Valve"]))
+valve_sample         <- as.character(sample(valve_ind, 9))
+
+predz <- ggpredict(
+  compmodel.intslope, 
+  terms = c('stimulus [x_prediction_sequence]','individual [valve_sample]'),
+  type='re', # can also be random
+  ci.lvl = 0.95, # 1- alpha (usually 0.05) level of confidence intervals
+                   ) 
+            
+predz %>% plot() #colors=c("blue","black","orange")
+```
+#### Whole sample
+
+```{r}
+
+set.seed(254)
+x_prediction_sequence <- seq(from=-1, to=0.2, by= 0.005)
+
+whole_ind <- unique(droplevels(
+  thresholdcomp$individual[thresholdcomp$treatment=="Control"]))
+whole_sample         <- as.character(sample(whole_ind, 9))
+
+predz <- ggpredict(
+  compmodel.intslope, 
+  terms = c('stimulus [x_prediction_sequence]','individual [whole_sample]'),
+  type='re', # can also be random
+  ci.lvl = 0.95, # 1- alpha (usually 0.05) level of confidence intervals
+                   ) 
+predz %>% plot() #colors=c("blue","black","orange")
