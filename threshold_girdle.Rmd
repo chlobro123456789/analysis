@@ -28,6 +28,7 @@ library('ggeffects')
 ```{r}
 thresholdgirdle <- read_csv("thresholdgirdle.csv")
 thresholdgirdle <- filter(thresholdgirdle, stimulus>-0.97)
+thresholdgirdle$size <- as.factor(thresholdgirdle$size)
 
 str(thresholdgirdle)
 ```
@@ -45,8 +46,36 @@ mean.count
 
 ```{r}
 plot(mean.count)
+
+bargraph.CI(stimulus, response, group = size, legend=T,
+            data=thresholdgirdle, ylim=c(0,1), xlab = "Stimulus",
+            ylab = "Shadow Responses Elicited (%)")
 ```
 
+```{r}
+#### to see if there's an effect of size.
+
+small <- subset(thresholdgirdle, size =="small")
+medium <- subset(thresholdgirdle, size =="medium")
+large <- subset(thresholdgirdle, size =="large")
+exlarge <- subset(thresholdgirdle, size =="xlarge")
+
+
+xsmall <- small$stimulus
+ysmall <- small$response
+xmedium <- medium$stimulus
+ymedium <- medium$response
+xlarge <- large$stimulus
+ylarge <- large$response
+xexlarge <- exlarge$stimulus
+yexlarge <- exlarge$response
+
+ggplot() + geom_point(data = small, aes(x = xsmall, y=ysmall), colour = "black") + geom_point(aes(x=xmedium, y=ymedium), colour = "red") + geom_point(aes(x = xlarge, y = ylarge), colour="purple")
+
+
+
+
+```
 
 ### The girdle model
 

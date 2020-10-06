@@ -20,6 +20,7 @@ library('lme4')
 library('tidyverse')
 library('ggeffects')
 library('AICcmodavg') # Used for AIC comparison
+library('optimx')
 ```
 
 
@@ -34,10 +35,13 @@ str(thresholdcomp)
 
 # Identifying any crazy individuals
 ```{r}
-thresholdcomp %>% group_by(individual) %>%
-  filter(stimulus==min(thresholdcomp$stimulus)) %>%
+
+thresholdcomp%>% group_by(individual) %>%
+  filter(stimulus=="-0.97") %>% #min(thresholdcomp$stimulus) - this gets the most negative stimulus (+ive control)
   summarise(resp = sum(as.numeric(response)-1)/length(as.numeric(response)) ) %>%
-  arrange(resp) %>% head(20)
+  arrange(resp) %>% head(80)
+
+
 ```
 
 24 would appear to be the single worst animal - having responded a quarter of the time with the clearest stimulus. I think you could justifiably exclude those animals which did not respond robustly to your positive control (e.g. those which responded less than 75% of the time). 
@@ -45,17 +49,6 @@ thresholdcomp %>% group_by(individual) %>%
 
 
 # Graphs
-```{r}
-stimmult <-thresholdcomp$response*100
-stimorder <-factor(thresholdcomp$stimulus, levels = unique(thresholdcomp$stimulus)) 
-# to make bars in the order found in csv file
-
-bargraph.CI(stimorder, stimmult, group = treatment, legend=T,
-            data=thresholdcomp, ylim=c(0,100), xlab = "Stimulus",
-            ylab = "Shadow Responses Elicited (%)")
-```
-
-Still need to find a way to make this plot nicer.
 
 ```{r}
 thresholdcomp %>% 
@@ -66,60 +59,85 @@ thresholdcomp %>%
 ### Stripchart
 
 ```{r}
-props <- with(thresholdcomp, aggregate(response, by  = list(length = length, stimulus = stimulus), mean))
+#props <- with(thresholdcomp, aggregate(response, by  = list(length = length, stimulus = stimulus), mean))
 
 #stripchart(x~stimulus*length, data = props, vertical = T, cex = 0.5, ylab = 'Proportion Responding')
 ```
 
-### Likelihood models with lme4
+### Likelihood models with lme4 excluding the positive control (-0.97)
 
-If it says singular thing then it means there is not enough infomration because you have split the data up too much with effects. If model not working, try changing optimisation.
+If it says singular thing then it means there is not enough infomration because you have split the data up too much with effects. If model not working, try changing optimisation. The optimiser that works well is the 'optimx'
+
+
+#excluding positive control from data set
+
+```{r}
+nowhole<- filter(thresholdcomp, stimulus>-0.97)
+nowhole$treatment    <- as.factor(nowhole$treatment)
+nowhole$size         <- as.factor(nowhole$size)
+nowhole$individual   <- as.factor(nowhole$individual)
+nowhole$response     <- as.factor(nowhole$response)
+str(nowhole)
+```
+#Models
+
+##Null Model
+```{r}
+compmodel.null <- glmer(
+  response ~ 1  + (1|individual) + (1|stim_order),
+  data = nowhole, family = binomial("logit"),
+  control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
+                         optCtrl = list(method = "nlminb", starttests = FALSE)))
+```
+
+
+# to see if there's an effect of size.
+```{r}
+#### to see if theres an effect of size
+
+compmodel.length <- glmer(
+  response ~ length  + (1|individual) + (1|stim_order),
+  data = nowhole, family = binomial("logit"),
+  control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
+                         optCtrl = list(method = "nlminb", starttests = FALSE)))
+summary(compmodel.length)
+anova(compmodel.null,compmodel.length)
+```
+There's no SD between the null model and length, thus length is excluded from main model.
+
 
 #### Main model
 
 ```{r Main model}
-compmodel.5<- glmer(
-  response ~ stimulus + treatment + (1|individual) + (1|length) + (1|stim_order),
-  data = thresholdcomp, family = binomial("logit"),
+compmodel<- glmer(
+  response ~ stimulus + treatment + (1|individual) + (1|stim_order),
+  data = nowhole, family = binomial("logit"),
   control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
                          optCtrl = list(method = "nlminb", starttests = FALSE))) 
 
-compmodel.5
+summary(compmodel)
 ```
+Stimulus and treatmen have an effect.
 
-
-#### Null model without stimulus
+## Model without stimulus and only treatment 
+(Whole, Valve, Girdle)
 
 ```{r Null model}
-compmodel.null <-glmer(
-  response ~ treatment + (1|individual) + (1|length) + (1|stim_order),
-  data = thresholdcomp, family = binomial(), 
+compmodel.treat <-glmer(
+  response ~ treatment + (1|individual) + (1|stim_order),
+  data = nowhole, family = binomial(), 
   control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
             optCtrl = list(method = "nlminb", starttests = FALSE)))
 
-compmodel.null
+summary(compmodel.treat)
 ```
-
-
-#### Null model without stimulus or treatment
-
-```{r}
-compmodel.0 <-glmer(
-  response ~ 1  + (1|individual) + (1|length) + (1|stim_order),
-  data = thresholdcomp, family = binomial(), 
-  control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
-            optCtrl = list(method = "nlminb", starttests = FALSE)))
-
-compmodel.0
-```
-
 
 #### Full model with stimulus, treatment, and their interaction
 
 ```{r}
 compmodel.int <-glmer(
-  response ~ stimulus*treatment  + (1|individual) + (1|length) + (1|stim_order),
-  data = thresholdcomp, family = binomial(),
+  response ~ stimulus*treatment  + (1|individual) + (1|stim_order),
+  data = nowhole, family = binomial(),
   control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
              optCtrl = list(method = "nlminb", starttests = FALSE)))
 
@@ -131,8 +149,8 @@ compmodel.int
                                              
 ```{r}
 compmodel.intslope <-glmer(
-  response ~ stimulus*treatment  + (1+stimulus|individual) + (1+stimulus|length) + (1|stim_order),
-  data = thresholdcomp, family = binomial(),
+  response ~ stimulus*treatment  + (1+stimulus|individual) + (1|stim_order),
+  data = nowhole, family = binomial(),
   control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
                 optCtrl = list(method = "nlminb", starttests = FALSE))) 
 
@@ -141,40 +159,21 @@ compmodel.intslope
 
                                              
                                              
-#putting (1+stimulus|random) effect tells the model that there may be differing intercepts based on the random effect, i.e. the baseline responses of the individual and those of differing sizes may be different.
-#I didn't add to stim_order because it threw an error.
+#putting (1+stimulus|random) effect tells the model that there may be differing intercepts based on the random effect, i.e. the baseline responses of the individual and those of differing sizes may be different. I didn't add to stim_order because it threw an error.
 
 
 ```{r}
-anova(compmodel.5, compmodel.null,compmodel.0,compmodel.int, compmodel.intslope) 
+anova(compmodel,compmodel.null,compmodel.treat,compmodel.int, compmodel.intslope) 
 ```
+The model with the lowest AIC (thus the best of the ones tested) is compmodel.intslope.
 
-
-
-```{r}
-models <- list(compmodel.5, compmodel.null,compmodel.0,compmodel.int, compmodel.intslope)
-model.names <- c('compmodel.5', 'compmodel.null','compmodel.0','compmodel.int', 'compmodel.intslope')
-aictab(cand.set = models, modnames = model.names)
-```
-
-Based on this, the best model is the one with an interaction between stimulus and treatment that allow for different baseline responses in length and individual. 
-
-> It carries 100% of total explanation.
-
-What do you mean by that last part? 
-
-#### Look at the model summary
+#### Look at the model summary of the best fit
 
 ```{r}
 summary(compmodel.intslope)
 ```
 
 ### Chloe's comments
-
-> If this all looks OK, then please can I have some help interpreting the output of this.
-
-Yes. This looks OK. And yes, I think i can help.
-
 > What I think I can say: there's an effect of treatment because there the best model included an interaction between the stimuli the individual has a strong (I think) effect and length does but less so.
 
 Yes. It is the best model, it also has far more degrees of freedom than the others but it is much better regardless, as revealed by the AIC values and the LRT tests.
@@ -187,21 +186,25 @@ Yes, the effect is length is much smaller. If you wanted, you could also filter 
 
 The intercept and slope (stimulus) are the parameters of the regression line but they are still in logit space. You can get the model fit by plugging them back into the line formula (y=mx+c) and putting it into logit space with the logit link, which in R, you can apply with pnorm().
 
+> I don't know what's going on with the correlation of fixed effects or the fixed effects.
+
+Don't worry so much about the correlations. That is literally telling you if they are correlated (it's a covariance matrix) which can be important, for instance if you have highly correlated effects effects which can be problematic. 
+
+The values out of the fix effects are *contrasts* contrasted against the default situation, which is the intercept (decided by the order of your factor levels). To get other values, you add the effects; e.g. to get the response in relation to stimulus with the valve stimulus, you can get. Again, you can compare to the panel above.
+
+
 ```{r}
 fixed <- fixef(compmodel.intslope) 
-fixed
-```
+fixed # pull out the fixed effect coefficients.
 
-Above, we pull out the fixed effect coefficients. 
 
-```{r}
 X  <- seq(from=-1,to=0.2,by=.02)
 y_control <- pnorm( fixed[2]*X + fixed[1])
-plot(X,y_control,main='Whole (control) stimulus')
-lines(X,y_control)
-```
+y_valve <- pnorm( (fixed[2] + fixed[6])*X + (fixed[1] + fixed[4]) )
+y_girdle <- pnorm( (fixed[2] + fixed[5])*X + (fixed[1] + fixed[3]) )
+plot(X,y_control,main='Response to stimuli',col="blue",xlim=c(-1,0.2)) + lines(X,y_control,col="blue") + points(X,y_valve,col="orange") + lines(X,y_valve,col="orange") + points(X,y_girdle,col="black") + lines(X,y_girdle,col="black") #+abline(v=0,col="grey")
 
-The intercept represents the *whole* treatment, so that is what is plotted above. How does this compare to your data?
+```
 
 You can compare how to predictions out of the model (below), though I think this should be across all treatments. 
 
@@ -218,37 +221,22 @@ predz <- ggpredict(
 predz %>% plot(colors=c("blue","black","orange"))
 ```
 
-> I don't know what's going on with the correlation of fixed effects or the fixed effects.
 
-Don't worry so much about the correlations. That is literally telling you if they are correlated (it's a covariance matrix) which can be important, for instance if you have highly correlated effects effects which can be problematic. 
 
-The values out of the fix effects are *contrasts* contrasted against the default situation, which is the intercept (decided by the order of your factor levels). To get other values, you add the effects; e.g. to get the response in relation to stimulus with the valve stimulus, you can get. Again, you can compare to the panel above.
+
+# Building the graph with predz and means of each
 
 ```{r}
-plot(X,y_control,main='Response to stimuli',col="blue",xlim=c(-1,0.2))
-lines(X,y_control,col="blue")
-
-y_valve <- pnorm( (fixed[2] + fixed[6])*X + (fixed[1] + fixed[4]) )
-points(X,y_valve,col="orange")
-lines(X,y_valve,col="orange")
-
-y_girdle <- pnorm( (fixed[2] + fixed[5])*X + (fixed[1] + fixed[3]) )
-points(X,y_girdle,col="black")
-lines(X,y_girdle,col="black")
-
-abline(v=0,col="grey")
+controlpredz <- subset(predz, group == "Control")
+girdlepredz <- subset(predz, group == "Girdle")
+valvepredz <- subset(predz, group == "Valve")
 ```
-
-I made the primitive plot above so that you can see how the fancier plot is made. The fancier plot also includes the measures of error. 
-
-
-
-### Building the graph with predz and means of each
+New data frames for each treatment.
 
 
 
+##Parameters for graph
 ```{r}
-
 xgirdle <- girdlepredz$x
 ygirdle <- girdlepredz$predicted
 girdlemin <- girdlepredz$conf.low
@@ -269,181 +257,69 @@ wholemin <- controlpredz$conf.low
 wholemax <- controlpredz$conf.high
 xmwhole <-c(-0.97, -0.96, -0.9, -0.52, -0.26, -0.03, 0) 
 ymwhole <- c(0.96111111, 0.98333333, 0.97777778, 0.95555556, 0.96111111, 0.36111111, 0.03333333)
+Treatment <- c("Control" = "blue", "Valve" = "orange", "Girdle" = "black")
 ```
 
 
 
 
-
-
-```{r}
-ggplot() + 
-  geom_line(data = girdlepredz, aes(xgirdle,ygirdle), colour = "black", size = 1) + 
-  geom_ribbon(aes(x = xgirdle, y=ygirdle,ymin=girdlemin, ymax=girdlemax),
-              linetype=2, alpha=0.1, fill = "black") +
-  geom_point(aes(x = xmgirdle, y = ymgirdle), colour = "black", size = 3, pch=0) +
-  geom_vline(aes(xintercept = -0.574), colour = "black") +
-  geom_line(data = valvepredz, aes(xvalve,yvalve), colour = "orange", size = 1) +
-  geom_point(aes(x = xmvalve, y = ymvalve), colour = "orange", size = 3, pch=1) +
-  geom_ribbon(aes(x = xvalve, y=yvalve,ymin=valvemin, ymax=valvemax),
-              linetype=2, alpha=0.1, fill = "orange") +
-  geom_vline(aes(xintercept = -0.206), colour = "orange") +
-  geom_line(data = controlpredz, aes(xwhole,ywhole), colour = "blue", size = 1) +
-  geom_point(aes(x = xmwhole, y = ymwhole), colour = "blue", size = 3, pch=2) +
-  geom_ribbon(aes(x = xwhole, y=ywhole,ymin=wholemin, ymax=wholemax),
-              linetype=2, alpha=0.1, fill = "blue") +
-  geom_vline(aes(xintercept = -0.134), colour = "blue") +
-  theme_classic() + labs(x = "Weber Contrast") + 
-  scale_y_continuous("Predicted Shadow Responses",
-                     sec.axis = sec_axis(~ . * 100,
-                                         name = "Shadow Responses Elicited (%)"))
-
-```
-
-
-
-
-```{r}
-################# to try and fix the lapse rate - had an effect on girdle but little on valve.
-nowhole<- filter(nowhole, stimulus>-0.97)
-nowhole$treatment    <- as.factor(nowhole$treatment)
-nowhole$size         <- as.factor(nowhole$size)
-nowhole$individual   <- as.factor(nowhole$individual)
-nowhole$response     <- as.factor(nowhole$response)
-str(nowhole)
-
-compmodel.intslope2 <-glmer(
-  response ~ stimulus*treatment  + (1+stimulus|individual) + (1+stimulus|length) + (1|stim_order),
-  data = nowhole, family = binomial(),
-  control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
-                         optCtrl = list(method = "nlminb", starttests = FALSE))) 
-
-compmodel.intslope2
-
-
-fixed2 <- fixef(compmodel.intslope2) 
-fixed2
-X  <- seq(from=-1,to=0.2,by=.02)
-y_control2 <- pnorm( fixed2[2]*X + fixed2[1])
-plot(X,y_control2,main='Whole (control) stimulus')
-lines(X,y_control2)
-
-x_prediction_sequence <- seq(from=-1, to=0.2, by= 0.005)
-
-predz2 <- ggpredict(
-  compmodel.intslope2, 
-  terms = c('stimulus [x_prediction_sequence]','treatment'),
-  type='fixed', # can also be random
-  ci.lvl = 0.95, # 1- alpha (usually 0.05) level of confidence intervals
-) 
-predz2 %>% plot(colors=c("blue","black","orange"))
-```
-
-
-
-
-```{r}
-controlpredz2 <- subset(predz2, group == "Control")
-girdlepredz2 <- subset(predz2, group == "Girdle")
-valvepredz2 <- subset(predz2, group == "Valve")
-```
-New data frames for each treatment.
-
+##Finding the intercept for each condition
 ```{r}
 #control
-derivative_control = c(diff(controlpredz2$predicted) / diff(controlpredz2$x), 0)
-find.df.control <- cbind.data.frame(controlpredz2$x,derivative_control)
-ggplot(find.df.control, aes(controlpredz2$x, derivative_control)) + geom_line()
+derivative_control = c(diff(controlpredz$predicted) / diff(controlpredz$x), 0)
+find.df.control <- cbind.data.frame(controlpredz$x,derivative_control)
+ggplot(find.df.control, aes(controlpredz$x, derivative_control)) + geom_line()
 max_deriv_control <- which(derivative_control==min(derivative_control))
-inflection_pt_control <- controlpredz2$x[max_deriv_control]
+inflection_pt_control <- controlpredz$x[max_deriv_control]
 inflection_pt_control
 
 #girdle
-derivative_girdle = c(diff(girdlepredz2$predicted) / diff(girdlepredz2$x), 0)
-find.df.girdle <- cbind.data.frame(girdlepredz2$x,derivative_girdle)
-ggplot(find.df.girdle, aes(girdlepredz2$x, derivative_girdle)) + geom_line()
+derivative_girdle = c(diff(girdlepredz$predicted) / diff(girdlepredz$x), 0)
+find.df.girdle <- cbind.data.frame(girdlepredz$x,derivative_girdle)
+ggplot(find.df.girdle, aes(girdlepredz$x, derivative_girdle)) + geom_line()
 max_deriv_girdle <- which(derivative_girdle==min(derivative_girdle))
-inflection_pt_girdle <- girdlepredz2$x[max_deriv_girdle]
+inflection_pt_girdle <- girdlepredz$x[max_deriv_girdle]
 inflection_pt_girdle
 
-
 #valve
-derivative_valve = c(diff(valvepredz2$predicted) / diff(valvepredz2$x), 0)
-find.df.valve <- cbind.data.frame(valvepredz2$x,derivative_valve)
-ggplot(find.df.valve, aes(valvepredz2$x, derivative_valve)) + geom_line()
+derivative_valve = c(diff(valvepredz$predicted) / diff(valvepredz$x), 0)
+find.df.valve <- cbind.data.frame(valvepredz$x,derivative_valve)
+ggplot(find.df.valve, aes(valvepredz$x, derivative_valve)) + geom_line()
 max_deriv_valve <- which(derivative_valve==min(derivative_valve))
-inflection_pt_valve <- valvepredz2$x[max_deriv_valve]
+inflection_pt_valve <- valvepredz$x[max_deriv_valve]
 inflection_pt_valve
 ```
-The threshold for each treatment.
 
-whole = -0.11
-girdle = -0.556
-valve = -0.22
-
-
-
+##Graph itself
 ```{r}
-#######plotting graph without whole in all treatments (-0.97)
-
-plot(X,y_control2,main='Response to stimuli',col="blue",xlim=c(-1,0.2))
-lines(X,y_control2,col="blue")
-
-y_valve2 <- pnorm( (fixed2[2] + fixed2[6])*X + (fixed2[1] + fixed2[4]) )
-points(X,y_valve2,col="orange")
-lines(X,y_valve2,col="orange")
-
-y_girdle2 <- pnorm( (fixed2[2] + fixed2[5])*X + (fixed2[1] + fixed2[3]) )
-points(X,y_girdle2,col="black")
-lines(X,y_girdle2,col="black")
-
-
-controlpredz2 <- subset(predz2, group == "Control")
-girdlepredz2 <- subset(predz2, group == "Girdle")
-valvepredz2 <- subset(predz2, group == "Valve")
-
-xgirdle2 <- girdlepredz2$x
-ygirdle2 <- girdlepredz2$predicted
-girdlemin2 <- girdlepredz2$conf.low
-girdlemax2 <- girdlepredz2$conf.high
-xmgirdle <- c(-0.97,-0.96,-0.9,-0.73,-0.52,-0.26,-0.03,0) # stimulus treatments. Girdle has an extra one -0.73 compared to the others.
-ymgirdle <- c(0.95986622, 0.81012658, 0.77021277, 0.66530612, 0.52343750, 0.17241379, 0.02348993, 0.01672241) #mean response rates
-
-xvalve2 <-valvepredz2$x
-yvalve2 <- valvepredz2$predicted
-valvemin2 <- valvepredz2$conf.low
-valvemax2 <- valvepredz2$conf.high
-xmvalve <- c(-0.97,-0.96, -0.9,-0.52, -0.26, -0.03, 0)
-ymvalve <- c(0.97765363,0.91304348,0.88554217,0.86206897, 0.75428571, 0.10169492, 0.05555556)
-
-xwhole2 <- controlpredz2$x
-ywhole2 <- controlpredz2$predicted
-wholemin2 <- controlpredz2$conf.low
-wholemax2 <- controlpredz2$conf.high
-xmwhole <-c(-0.97, -0.96, -0.9, -0.52, -0.26, -0.03, 0) 
-ymwhole <- c(0.96111111, 0.98333333, 0.97777778, 0.95555556, 0.96111111, 0.36111111, 0.03333333)
-
-ggplot() + 
-  geom_line(data = girdlepredz2, aes(xgirdle2,ygirdle2), colour = "black", size = 1) + 
-  geom_ribbon(aes(x = xgirdle2, y=ygirdle2,ymin=girdlemin2, ymax=girdlemax2),
-              linetype=2, alpha=0.1, fill = "black") +
-  geom_point(aes(x = xmgirdle, y = ymgirdle), colour = "black", size = 3, pch=0) +
-  geom_vline(aes(xintercept = inflection_pt_girdle), colour = "black") +
-  geom_line(data = valvepredz2, aes(xvalve2,yvalve2), colour = "orange", size = 1) +
+overallplot<- ggplot() + 
+  geom_line(data = girdlepredz, aes(xgirdle,ygirdle,color = "Girdle"), size = 1) + 
+  geom_ribbon(aes(x = xgirdle, y=ygirdle,ymin=girdlemin, ymax=girdlemax),
+              linetype=2, alpha=0.1, fill = "Black") +
+  geom_point(aes(x = xmgirdle, y = ymgirdle), colour = "Black", size = 3, pch=0) +
+  geom_vline(aes(xintercept = inflection_pt_girdle), colour = "Black") +
+  geom_line(data = valvepredz, aes(xvalve,yvalve, color = "Valve"), size = 1) +
   geom_point(aes(x = xmvalve, y = ymvalve), colour = "orange", size = 3, pch=1) +
-  geom_ribbon(aes(x = xvalve2, y=yvalve2,ymin=valvemin2, ymax=valvemax2),
+  geom_ribbon(aes(x = xvalve, y=yvalve,ymin=valvemin, ymax=valvemax),
               linetype=2, alpha=0.1, fill = "orange") +
   geom_vline(aes(xintercept = inflection_pt_valve), colour = "orange") +
-  geom_line(data = controlpredz2, aes(xwhole2,ywhole2), colour = "blue", size = 1) +
+  geom_line(data = controlpredz, aes(xwhole,ywhole,color = "Control"), size = 1) +
   geom_point(aes(x = xmwhole, y = ymwhole), colour = "blue", size = 3, pch=2) +
-  geom_ribbon(aes(x = xwhole2, y=ywhole2,ymin=wholemin2, ymax=wholemax2),
+  geom_ribbon(aes(x = xwhole, y=ywhole,ymin=wholemin, ymax=wholemax),
               linetype=2, alpha=0.1, fill = "blue") +
   geom_vline(aes(xintercept = inflection_pt_control), colour = "blue") +
-  theme_classic() + labs(x = "Weber Contrast") + 
+  theme_classic() + labs(x = "Weber Contrast", colours = "Legend") + 
   scale_y_continuous("Predicted Shadow Responses",
                      sec.axis = sec_axis(~ . * 100,
-                                         name = "Shadow Responses Elicited (%)"))
+                                         name = "Shadow Responses Elicited (%)")) +
+  scale_color_manual(values = Treatment)
+overallplot 
 ```
+
+
+To change the appearance of the raw data points - pch(diffnumberforeachpoint) so you can see all points even when v similar.
+
+
 
 
 ### Why the data are more extreme than the predictions?
@@ -458,80 +334,16 @@ Well done on the plot. It is not unheard of for some of the raw data points to b
 
 * I have so far talked about non-systemic fluctuations away from the fitted line in either direction - but you definitely have a systemic difference, in that the highest proportions for each treatment - corresponding to the more salient stimuli - fall below the model. This means that actually there is a lapse rate for the chitons: A rate at which the chitons fail even with a really clear stimulus.  You can estimate this rate by getting the success proportion for each treatment with the most salient stimulus (-0.95 Weber contrast) - it appears to be 0.05 in each case. (It may be lower in the case of the girdle where the most salient stimulus level conflicts slightly with the three next most salient stimulus levels - unless they have some weird preference for specific contrast levels this looks to me to be at least partly just random variation). You have too options here: You can explain that your model is slightly askew because of this lapse (and therefore the *true *threshold may be at a slightly more negative value than the fitted line) or you can introduce an upper asymptote to consider the lapse rate.  
 
-### A few other changes
-
-* I made the range of the plot along the x-axis wider. It now includes values outside the range of your measurements, which (in the case of values of stimulus above 0) do not correspond to the real world but do tell you how the model *thinks*.
-
-* I changed Weber__'s__ to *Weber*
-
-* I made the other plot's colours correspond.
-
-* I changed the appearance of the raw data points using pch so you can see all of those for the girdle.
-
-### Notes
-
-* You will need to add a legend to the plot at some point
-
-* Consider continuing to use this Rmardown format to run your code (you add R code chunks with Ctrl + Alt + I). It allows you to mix code, text and figures in one go and can easily be made into a conventient document by pressing Crtl + Shift + K or the knit button above. It is easy to follow for anyone who wants to read it which is good for reproducibility and to learn from. It's also simpler for me : )
-
-
-```{r}
-######## adding random effects to plot
-
-
-predz3 <- ggpredict(
-  compmodel.intslope2, 
-  terms = c('stimulus [x_prediction_sequence]','treatment'),
-  type='re', # can also be random
-  ci.lvl = 0.95, # 1- alpha (usually 0.05) level of confidence intervals
-) 
 
 
 
-controlpredz3 <- subset(predz3, group == "Control")
-girdlepredz3 <- subset(predz3, group == "Girdle")
-valvepredz3 <- subset(predz3, group == "Valve")
-
-xgirdle3 <-girdlepredz3$x
-ygirdle3 <-girdlepredz3$predicted
-xvalve3 <-valvepredz3$x
-yvalve3 <-valvepredz3$predicted
-
-xwhole3 <-controlpredz3$x
-ywhole3 <-controlpredz3$predicted
-
-ggplot() + 
-  geom_line(data = girdlepredz2, aes(xgirdle2,ygirdle2), colour = "black", size = 0.5) + 
-  geom_ribbon(aes(x = xgirdle2, y=ygirdle2,ymin=girdlemin2, ymax=girdlemax2),
-              linetype=2, alpha=0.1, fill = "black") +
-  geom_line(data=girdlepredz3, aes(xgirdle3,ygirdle3), colour = "black", size = 3, linetype = "dashed") +
-  geom_point(aes(x = xmgirdle, y = ymgirdle), colour = "black", size = 3, pch=0) +
-  geom_vline(aes(xintercept = -0.59), colour = "black") +
-  geom_line(data = girdlepredz2, aes(xvalve2,yvalve2), colour = "orange", size = 0.5) + 
-  geom_ribbon(aes(x = xvalve2, y=yvalve2,ymin=valvemin2, ymax=valvemax2),
-              linetype=2, alpha=0.1, fill = "orange") +
-  geom_line(data=valvepredz3, aes(xvalve3,yvalve3), colour = "orange", size = 3, linetype = "dashed") +
-  geom_point(aes(x = xmvalve, y = ymvalve), colour = "orange", size = 3, pch=1) +
-  geom_vline(aes(xintercept = -0.206), colour = "orange") +
-  geom_line(data = controlpredz2, aes(xwhole2,ywhole2), colour = "blue", size = 0.5) +
-  geom_point(aes(x = xmwhole, y = ymwhole), colour = "blue", size = 3, pch=2) +
-  geom_ribbon(aes(x = xwhole2, y=ywhole2,ymin=wholemin2, ymax=wholemax2),
-              linetype=2, alpha=0.1, fill = "blue") +
-  geom_line(data=controlpredz3, aes(xwhole3,ywhole3), colour = "blue", size = 3, linetype = "dashed") +
-  geom_vline(aes(xintercept = -0.134), colour = "blue") +
-  theme_classic() + labs(x = "Weber Contrast") + 
-  scale_y_continuous("Predicted Shadow Responses",
-                     sec.axis = sec_axis(~ . * 100,
-                                         name = "Shadow Responses Elicited (%)"))
 
 
-```
-
-### Make plots for individuals
+# Make plots for individuals because this has an effect on response rate
 
 So, since the individuals are nested within treatments rather than shared across them (a given individual is only measured for one experiment) we might check which individuals are used for each treatment and plot these. 
 
-#### Girdle animals
+## Girdle animals
 
 ```{r}
 set.seed(321)
@@ -551,7 +363,7 @@ predz <- ggpredict(
 predz %>% plot() #colors=c("blue","black","orange")
 ```
 
-#### Valve sample
+## Valve sample
 
 ```{r}
 set.seed(161)
@@ -570,21 +382,98 @@ predz <- ggpredict(
             
 predz %>% plot() #colors=c("blue","black","orange")
 ```
-#### Whole sample
+## Whole sample
 
 ```{r}
-
 set.seed(254)
 x_prediction_sequence <- seq(from=-1, to=0.2, by= 0.005)
 
 whole_ind <- unique(droplevels(
   thresholdcomp$individual[thresholdcomp$treatment=="Control"]))
-whole_sample         <- as.character(sample(whole_ind, 9))
-
+whole_sample <- as.character(sample(whole_ind, 9))
 predz <- ggpredict(
   compmodel.intslope, 
   terms = c('stimulus [x_prediction_sequence]','individual [whole_sample]'),
   type='re', # can also be random
   ci.lvl = 0.95, # 1- alpha (usually 0.05) level of confidence intervals
                    ) 
+            
 predz %>% plot() #colors=c("blue","black","orange")
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```
+#Other things
+
+### Notes
+
+* You will need to add a legend to the plot at some point
+
+* Consider continuing to use this Rmardown format to run your code (you add R code chunks with Ctrl + Alt + I). It allows you to mix code, text and figures in one go and can easily be made into a conventient document by pressing Crtl + Shift + K or the knit button above. It is easy to follow for anyone who wants to read it which is good for reproducibility and to learn from. It's also simpler for me : )
+
+
+```{r}
+models <- list(compmodel.5, compmodel.null,compmodel.0,compmodel.int, compmodel.intslope)
+model.names <- c('compmodel.5', 'compmodel.null','compmodel.0','compmodel.int', 'compmodel.intslope')
+aictab(cand.set = models, modnames = model.names)
+```
+
+Based on this, the best model is the one with an interaction between stimulus and treatment that allow for different baseline responses in length and individual. 
