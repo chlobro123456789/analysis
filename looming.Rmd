@@ -85,84 +85,28 @@ midz <- barplot(mean.counte, ylim = c(0,1), xlab = "Stimulus", ylab = "Shadow Re
 midz <- barplot(mean.counte, ylim = c(0,1), xlab = "Stimulus", ylab = "Shadow Responses Elicited (%)") +arrows(midz, mean.counte-se.counte, midz, mean.counte+se.counte,code = 3, angle = 90, length = 0.1)
 
 ```
-
-#Models for just looming even
-
-##Null model
-```{r}
-
-##### a null model
-
-evenmodel.null <-glmer(response ~ 1 + (1|chiton), data = loomingeven, family = binomial(),                             control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
-                                              optCtrl = list(method = "nlminb", starttests = FALSE)))  #  
-
-```
-
-##to see if there's an effect of length
-```{r}
-loomingmodel.example <- glmer(response ~ stimulus * length + (1|chiton),
-                              data = loomingeven, family = binomial("logit"),      
-                    control = glmerControl(
-                      optimizer = "optimx", calc.derivs = FALSE,
-                                           optCtrl = list(method = "nlminb", starttests = FALSE)))  
-
-loomingmodel.example2 <- glmer(response ~ stimulus + length + (1|chiton),
-                              data = loomingeven, family = binomial("logit"),      
-                    control = glmerControl(
-                      optimizer = "optimx", calc.derivs = FALSE,
-                                           optCtrl = list(method = "nlminb", starttests = FALSE)))  
-
-loomingmodel.example3 <- glmer(response ~ stimulus + (1|chiton),
-                              data = loomingeven, family = binomial("logit"),      
-                    control = glmerControl(
-                      optimizer = "optimx", calc.derivs = FALSE,
-                                           optCtrl = list(method = "nlminb", starttests = FALSE)))  
-
-anova(loomingmodel.example,loomingmodel.example2,loomingmodel.example3,evenmodel.null)
-summary(loomingmodel.example3)
-```
-AIC comparison shows that the model that includes an interaction between length and stimulus. Thus length will be considered.
-
-## Just Stimulus Model
-```{r}
-evenmodel <-glmer(response ~ stimulus + (1|chiton), data = loomingeven, family = binomial(),      
-                  control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
-                                         optCtrl = list(method = "nlminb", starttests = FALSE)))  
-summary(evenmodel)
-```
-
-The model was affected by individuals so added different into evenmodel.slope
-
-
-
-##adding diff slope for chitons.
-```{r}
-evenmodel.slope <-glmer(response ~ stimulus + (1+stimulus|chiton), data = loomingeven, family = binomial(), control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
-                                         optCtrl = list(method = "nlminb", starttests = FALSE)))
-summary(evenmodel.slope)
-```
-
-
-#adding diff slope for chitons and interaction with length
-```{r}
-evenmodel.slope2 <-glmer(response ~ stimulus*length + (1+stimulus|chiton), data = loomingeven, family = binomial(), control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
-                                         optCtrl = list(method = "nlminb", starttests = FALSE)))
-summary(evenmodel.slope)
-```
-
+#Comparison of positive controls across two looming experiments.
 
 ```{r}
-anova(evenmodel.slope2,evenmodel.slope,loomingmodel.example)
-summary(loomingmodel.example)
-summary(glht(loomingmodel.example, mcp(stimulus="Tukey")))
+poscontrol <- subset(loomingcomb, stimulus == "Black")
+poscontrol
+
+bargraph.CI(experiment, response, legend=T, data=poscontrol, ylim=c(0,1), xlab = "Stimulus", ylab = "Response") #tp see black responses separately.
+
+pos.model <- glmer(response ~ experiment + (1|chiton), data = poscontrol, family = binomial(),                             control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
+                                              optCtrl = list(method = "nlminb", starttests = FALSE)))
+pos.model.null <- glmer(response ~ 1 + (1|chiton), data = poscontrol, family = binomial(),                             control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
+                                              optCtrl = list(method = "nlminb", starttests = FALSE)))
+
+anova(pos.model,pos.model.null)
+summary(glht(pos.model, mcp(experiment="Tukey")))
 ```
-The best model is the one that includes an interaction between stimulus and length, but considering different response rates for each chiton does not make a difference. Thus loomingmodel.example is the best model.
+There's no SD between null and model and AIC is only very slightly better. Therefore, two experiments will be combined into one for analysis
 
+```{r}
+bargraph.CI(stimulus, response, legend=T, data=loomingcomb, ylim=c(0,1), xlab = "Stimulus", ylab = "Response") #tp see black responses separately.
+```
 
-I think from this I can conclude that the biggest effect of individual is on the positive control ("black"), but also has an impact on even background,compared with even black. Length slightly affects the responses of even black, but not much impact on +ive control or even background. 
-
-
-#Combination of looming even and looming
 
 ```{r}
 loomingcomb$stimulus <- as.factor(loomingcomb$stimulus)
@@ -171,112 +115,47 @@ loomingcomb$experiment <-as.factor(loomingcomb$experiment)
 loomingcomb$response <-as.numeric(loomingcomb$response)
 
 str(loomingcomb)
+
+mean.count <- tapply(loomingcomb$response, list(loomingcomb$stimulus), mean)
+mean.count
+sd.count <- tapply(loomingcomb$response, list(loomingcomb$stimulus), sd)
+sd.count
+n.count <- tapply(loomingcomb$response, list(loomingcomb$stimulus), length)
+n.count
+se.count <- sd.count/sqrt(n.count)
+se.count
+
+
 ```
 
-
-
+#Models
 ```{r}
-bargraph.CI(stimulus, response, group = experiment, legend=T, data=loomingcomb, ylim=c(0,1), xlab = "Stimulus", ylab = "Response") #tp see black responses separately.
-
-```
-
-########## LME4 Analysis  ###########
-```{r}
-loomingmodel.0 <-glmer(response ~ 1  + (1|chiton), data = loomingcomb, family = binomial(), 
-                       control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
-                                           optCtrl = list(method = "nlminb", starttests = FALSE)))
-
-
-
-loomingmodel.5<- glmer(response ~ stimulus + experiment + (1|chiton), data = loomingcomb, family =
-                         binomial(), control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
+loomingmodel.example <- glmer(response ~ stimulus * length + (1|chiton),
+                              data = loomingcomb, family = binomial("logit"),      
+                    control = glmerControl(
+                      optimizer = "optimx", calc.derivs = FALSE,
                                            optCtrl = list(method = "nlminb", starttests = FALSE)))  
 
-
-
-loomingmodel.3 <-glmer(response ~ experiment + (1|chiton), data = loomingcomb, family = binomial(), 
-                       control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
-                                              optCtrl = list(method = "nlminb", starttests = FALSE)))
-
-
-loomingmodel.int <-glmer(response ~ stimulus*experiment  + (1|chiton), data = loomingcomb, family = 
-                           binomial(), control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
-                                             optCtrl = list(method = "nlminb", starttests = FALSE)))
-
-
-
-loomingmodel.intslope <-glmer(response ~ stimulus*experiment  + (1+stimulus|chiton), data = loomingcomb, 
-                          family = binomial(), control = glmerControl(optimizer = "optimx",
-                              calc.derivs = FALSE, optCtrl = list(method = "nlminb", starttests = FALSE))) 
-
-anova(loomingmodel.5, loomingmodel.3,loomingmodel.0, loomingmodel.intslope)
-summary(glht(loomingmodel.5, mcp(stimulus="Tukey")))
+summary(loomingmodel.example)
 ```
-
-> I'm not entirely sure that the two .int models worked because of an error, I presume it's because there's not responses for both experiments. Maybe if I explain why I tried to compare them. I wanted to see if the response rate across the black condition (the only stimulus in BOTH treatments) is the same for both experiments. So I've made all these modes because I wasn't actually sure how to do it.
-
-
-> Also from the Tukey's of loomingmodel.5 (AIC declared the best), There's a significant difference between all treatments, apart form the white circle and even background. I'm not sure if there's a problem with the black condition because it's not yet determined whether the two experiments had an effect on the responses to a plain black expanding circle.
+AIC comparison shows that the model that includes an interaction between length and stimulus. Thus length will be considered.
 
 
-```{r}
-ex_fixef <- fixef(loomingmodel.example)
-print(paste0(round(pnorm(ex_fixef[1])*100,2),"%"))
-```
+After finding out the best model that incorporates length is the one with an interaction with stimulus, I added model with a random slope for chiton. This model was not better than the model including an interaction with length but not a random slope. Therefore the model used was loomingmodel.example.
 
-Whereas, this control (Even background) is half of the time 
+
+The best model is the one that includes an interaction between stimulus and length, but considering different response rates for each chiton does not make a difference. Thus loomingmodel.example is the best model.
+
+
+I think from this I can conclude that the biggest effect of individual is on the positive control ("black"), but also has an impact on even background,compared with even black. Length slightly affects the responses of even black, but not much impact on +ive control or even background. 
 
 
 
 ```{r}
-ex_fixef <- fixef(evenmodel.slope)
-ex_fixef
-print(paste0(round(pnorm(ex_fixef[1]+ex_fixef[2])*100,2),"%"))
+apred <- ggpredict(loomingmodel.example,'stimulus') 
+error <- qt(0.975,df=n.count-1)*sd.count/sqrt(n.count)
+xaxis <- c("Black", "even_background", "even_black", "White")
+
+
+ggplot() + geom_point(data = apred, aes(x, predicted), colour = "green") + geom_errorbar(data = apred, aes(x = x, y = predicted, ymin = conf.low, ymax = conf.high), colour = "green") + geom_point(aes(apred$x, mean.count), colour = "black") + geom_errorbar(aes(xaxis, mean.count, ymin=mean.count-error, ymax=mean.count+error))
 ```
-
-And the other most of the time
-
-```{r}
-ex_fixef <- fixef(evenmodel.slope)
-print(paste0(round(pnorm(ex_fixef[1]+ex_fixef[3])*100,2),"%"))
-```
-99.99, 47.89, 86.12 - with bestmodel from loomingcomb (loomingmodel.5)
-99.91,82.03, 28.03 - with best model from looming even (loomingmodel.example)
-99.91,47.39,85.86 - with the second best model (evenmodel.slope) from looming even without an interaction with length.
-black, evenbackground, evenblack.
-From these averages, it seems that the best model isnt the one from the analysis of just looming_even that includes an interaction between length and stimulus because these means are not anywhere near those averaged further up: 
-   Black     even_background     even_black 
-   0.965           0.490           0.710 
-
-```{r}
-mloomingmodel.example <- c(99.91,82.03, 28.03) 
-mevenmodel.slope <- c(99.91,47.39,85.86)
-mloomingmodel.5 <- c(99.99, 47.89, 86.12)
-xaxis <-c('black', 'evenbackground', 'evenblack')
-ggplot() + geom_point(aes(x = xaxis, y=mloomingmodel.example), colour = "red", pch = 1, size = 5) + geom_point(aes(x = xaxis, y=mevenmodel.slope), colour = "black", pch = 2, size = 5) + geom_point(aes(x = xaxis, y=mloomingmodel.5), colour = "green", pch = 3, size = 5)
-```
-
-
-
-```
-### Models
-
-
-```{r}
-loomingmodel.example4 <- glmer(
-  response ~ stimulus + (1|chiton),
-  data = loomingcomb, family = binomial("logit"),      
-  control = glmerControl(
-  optimizer = "optimx", calc.derivs = FALSE,
-  optCtrl = list(method = "nlminb", starttests = FALSE)))  
-
-summary(loomingmodel.example4)
-```
-
-This gives you both a positive and a negative control. Can I still do this even though the individuals are separate for each treatment?
-
-```{r}
-library(ggeffects)
-ggpredict(loomingmodel.5,'stimulus') %>% plot()
-```
-
