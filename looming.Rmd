@@ -124,6 +124,7 @@ summary(loomingmodel.example3)
 AIC comparison shows that the model that includes an interaction between length and stimulus. Thus length will be considered.
 
 ## Just Stimulus Model
+
 ```{r}
 evenmodel <-glmer(response ~ stimulus + (1|chiton), data = loomingeven, family = binomial(),      
                   control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
@@ -257,8 +258,6 @@ ggplot() + geom_point(aes(x = xaxis, y=mloomingmodel.example), colour = "red", p
 ```
 
 
-
-```
 ### Models
 
 
@@ -276,7 +275,118 @@ summary(loomingmodel.example4)
 This gives you both a positive and a negative control. Can I still do this even though the individuals are separate for each treatment?
 
 ```{r}
+ex_fixef <- fixef(loomingmodel.example4)
+print(paste0(round(pnorm(ex_fixef[1])*100,2),"%"))
+```
+
+Whereas, this control (Even background) is half of the time 
+
+
+```{r}
+ex_fixef <- fixef(evenmodel.slope)
+ex_fixef
+print(paste0(round(pnorm(ex_fixef[1]+ex_fixef[2])*100,2),"%"))
+```
+
+And the other most of the time
+
+```{r}
+ex_fixef <- fixef(evenmodel.slope)
+print(paste0(round(pnorm(ex_fixef[1]+ex_fixef[3])*100,2),"%"))
+```
+99.99, 47.89, 86.12 - with bestmodel from loomingcomb (loom.m.5)
+99.91,82.03, 28.03 - with best model from looming even (loom.m.example)
+99.91,47.39,85.86 - with the second best model (evenmodel.slope) from looming even without an interaction with length.
+black, evenbackground, evenblack.
+From these averages, it seems that the best model isnt the one from the analysis of just looming_even that includes an interaction between length and stimulus because these means are not anywhere near those averaged further up: 
+   Black     even_background     even_black 
+   0.965           0.490           0.710 
+
+```{r}
+mloom.m.example <- c(99.91,82.03, 28.03) 
+mevenmodel.slope <- c(99.91,47.39,85.86)
+mloom.m.5 <- c(99.99, 47.89, 86.12)
+xaxis <-c('black', 'evenbackground', 'evenblack')
+ggplot() + geom_point(aes(x = xaxis, y=mloom.m.example), colour = "red", pch = 1, size = 5) + geom_point(aes(x = xaxis, y=mevenmodel.slope), colour = "black", pch = 2, size = 5) + geom_point(aes(x = xaxis, y=mloom.m.5), colour = "green", pch = 3, size = 5)
+```
+
+
+### Models
+
+
+```{r}
+loom.m.example4 <- glmer(
+  response ~ stimulus + (1|chiton),
+  data = loomingcomb, family = binomial("logit"),      
+  control = glmerControl(
+  optimizer = "optimx", calc.derivs = FALSE,
+  optCtrl = list(method = "nlminb", starttests = FALSE)))  
+
+summary(loom.m.example4)
+```
+
+This gives you both a positive and a negative control. Can I still do this even though the individuals are separate for each treatment?
+
+```{r}
 library(ggeffects)
 ggpredict(loomingmodel.5,'stimulus') %>% plot()
 ```
+
+### Notes
+
+I don't think it makes sense to include both *stimulus* and *experiment* in the full models as separate fixed effects. 
+
+For instance, in the model **response ~ stimulus*experiment + (1|chiton)** this is asking: is the response conditioned upon the stimulus type and/or whether it was the first (control) set of experiments or the second (even) set of experiments or upon the interaction of these things (as well as the chiton individuals). But with one exception the different stimuli are not shared between the sets of experiments and cannot be compared (neither can the individuals) - this is why lme4 complains and says they are *rank deficient*. 
+
+It's also unclear to me what is the scientific import of being part of the first experiment or the second - surely only the stimuli used are important. I would do one of two things:
+
+*1. Wrap the experiments together by using the stimulus but not experiment as a fixed effect. The random effect of individual already accounts for the fact that individuals vary. If you wanted you could also add experiment as a random effect given the sets of experiments were at different times, though I do not think that this is essential.
+
+*2. Treat the two sets of experiments as separate and analyse them with different models. 
+
+I have modified the above models in the manner of (1) in the chunk below:
+
+
+```{r}
+loom.m.empty <-glmer(response ~ 1 + (1|chiton),
+                       data = loomingcomb,
+                       family = binomial(), 
+                       control = glmerControl(optimizer = "optimx", 
+                                              calc.derivs = FALSE,
+                                           optCtrl = list(method = "nlminb", 
+                                                          starttests = FALSE)))
+
+
+loom.m.stimulus <- glmer(response ~ stimulus + (1|chiton), 
+                       data = loomingcomb, 
+                       family =        binomial(), 
+                       control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
+                                           optCtrl = list(method = "nlminb", 
+                                                          starttests = FALSE)))  
+
+loom.m.full <-glmer(
+  response ~ stimulus + (1+stimulus|chiton),
+                              data = loomingcomb, 
+                          family = binomial(),
+                          control = glmerControl(optimizer = "optimx",
+                              calc.derivs = FALSE,
+                              optCtrl = list(method = "nlminb", starttests = FALSE))) 
+
+anova(loom.m.empty, loom.m.stimulus,loom.m.full)
+```
+
+
+### Post-hoc Tukey test
+
+```{r}
+summary(glht(loom.m.stimulus, mcp(stimulus="Tukey")))
+```
+
+### Plot the marginal effects
+
+```{r}
+library(ggeffects)
+ggpredict(loom.m.stimulus,'stimulus') %>% plot()
+```
+
 
