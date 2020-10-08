@@ -42,6 +42,13 @@ looming$response <- as.numeric(looming$response)
 str(looming)
 ```
 
+
+```{r}
+loomingcomb %>%
+  ggplot(aes(y=length,group=stimulus)) + geom_boxplot()
+```
+
+
 ```{r}
 #barplot
 mean.countlooming <- tapply(looming$response, list(looming$stimulus), mean)
@@ -209,7 +216,6 @@ loomingmodel.4 <- glmer(response ~ length + (1|chiton),
                                            optCtrl = list(method = "nlminb", starttests = FALSE)))
 ```
 
-
 ### Model comparison
  
 ```{r}
@@ -273,4 +279,5 @@ plot(apred)
 ```
 
 Interestingly, the largest animals nearly always respond to the black stimulus but the smallest also respond over 95% of the time.  This skew grows with the even_black stimulus: small animals respond only half the time, whereas the largest do over 95% of the time. Could this response be due to their visual ecology or improved performance with size, or could experimental conditions play a role?
+
 
