@@ -26,13 +26,13 @@ library(ggeffects)
 ```{r}
 loomingcomb <- read_csv("looming_comb.csv")
 loomingcomb %>% filter(experiment=="first") %>% droplevels -> looming
-loomingcomb %>% filter(experiment=="even") %>% droplevels -> loomingeven
+loomingcomb %>% filter(experiment=="even")  %>% droplevels -> loomingeven
 ```
 
-
-#for first experiment with just black and white expanding circles
+For first experiment with just black and white expanding circles
 black = positive control
 white = negative control
+
 ```{r}
 looming$stimulus <- as.factor(looming$stimulus)
 looming$chiton <- as.factor(looming$chiton)
@@ -53,12 +53,18 @@ n.count <- tapply(looming$response, list(looming$stimulus), length)
 n.count
 se.count <- sd.count/sqrt(n.count)
 se.count
-mids <- barplot(mean.countlooming, ylim = c(0,1), xlab = "Stimulus", ylab = "Shadow Responses Elicited (%)") 
-mids <- barplot(mean.countlooming, ylim = c(0,1), xlab = "Stimulus", ylab = "Shadow Responses Elicited (%)") +arrows(mids, mean.countlooming-se.count, mids, mean.countlooming+se.count,code = 3, angle = 90, length = 0.1)
-
 ```
 
-#for second experiment with even intensity stimuli and black circle
+
+```{r}
+mids <- barplot(mean.countlooming, ylim = c(0,1),
+                xlab = "Stimulus", ylab = "Shadow Responses Elicited (%)")
+arrows(mids, mean.countlooming-se.count, mids, mean.countlooming+se.count,
+         code = 3, angle = 90, length = 0.1)
+```
+
+For second experiment with even intensity stimuli and black circle
+
 ```{r}
 loomingeven$stimulus <- as.factor(loomingeven$stimulus)
 loomingeven$chiton <- as.factor(loomingeven$chiton)
@@ -67,11 +73,10 @@ loomingeven$response <-as.numeric(loomingeven$response)
 
 str(loomingeven)
 ```
-Even black is a black circle on white background that expands to a lighter one on a white background = ensure responses are to circle changing.
-Even background is a white circle on a grey background expanding to a grey circle on a white background = check responses aren't due to overall changes in projection instead of just circle.
-black = positive control
+
+Even black is a black circle on white background that expands to a lighter one on a white background = ensure responses are to circle changing. Even background is a white circle on a grey background expanding to a grey circle on a white background = check responses aren't due to overall changes in projection instead of just circle. black = positive control
+
 ```{r}
-#barplot
 mean.counte <- tapply(loomingeven$response, list(loomingeven$stimulus), mean)
 mean.counte
 sd.counte <- tapply(loomingeven$response, list(loomingeven$stimulus), sd)
@@ -80,36 +85,60 @@ n.counte <- tapply(loomingeven$response, list(loomingeven$stimulus), length)
 n.counte
 se.counte <- sd.counte/sqrt(n.counte)
 se.counte
-midz <- barplot(mean.counte, ylim = c(0,1), xlab = "Stimulus", ylab = "Shadow Responses Elicited (%)") 
-midz <- barplot(mean.counte, ylim = c(0,1), xlab = "Stimulus", ylab = "Shadow Responses Elicited (%)") +arrows(midz, mean.counte-se.counte, midz, mean.counte+se.counte,code = 3, angle = 90, length = 0.1)
-
 ```
-<<<<<<< HEAD
 
 
-#Combination of looming even and looming
-Even black is a black circle on white background that expands to a lighter one on a white background = ensure responses are to circle changing.
-Even background is a white circle on a grey background expanding to a grey circle on a white background = check responses aren't due to overall changes in projection instead of just circle.
+```{r}
+midz <- barplot(mean.counte, ylim = c(0,1), xlab = "Stimulus", ylab = "Shadow Responses Elicited (%)") 
+arrows(midz, mean.counte-se.counte, midz, mean.counte+se.counte,code = 3, angle = 90, length = 0.1)
+```
+
+### Combination of looming even and looming
+
+Even black is a black circle on white background that expands to a lighter one on a white background = ensure responses are to circle changing. Even background is a white circle on a grey background expanding to a grey circle on a white background = check responses aren't due to overall changes in projection instead of just circle.
 black = positive control
 white = negative control
-=======
-#Comparison of positive controls across two looming experiments.
+
+Comparison of positive controls across two looming experiments.
 
 ```{r}
 poscontrol <- subset(loomingcomb, stimulus == "Black")
-poscontrol
+head(poscontrol)
+```
 
-bargraph.CI(experiment, response, legend=T, data=poscontrol, ylim=c(0,1), xlab = "Stimulus", ylab = "Response") #tp see black responses separately.
 
-pos.model <- glmer(response ~ experiment + (1|chiton), data = poscontrol, family = binomial(),                             control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
-                                              optCtrl = list(method = "nlminb", starttests = FALSE)))
-pos.model.null <- glmer(response ~ 1 + (1|chiton), data = poscontrol, family = binomial(),                             control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
-                                              optCtrl = list(method = "nlminb", starttests = FALSE)))
+```{r}
+bargraph.CI(experiment, response, legend=T, data=poscontrol, ylim=c(0,1),
+            xlab = "Stimulus", ylab = "Response") #tp see black responses separately.
+```
 
+
+```{r}
+pos.model <- glmer(response ~ experiment + (1|chiton),
+                   data = poscontrol, family = binomial(), 
+                   control = glmerControl(optimizer = "optimx",
+                   calc.derivs = FALSE,
+                   optCtrl = list(method = "nlminb", starttests = FALSE)))
+
+pos.model
+```
+
+```{r}
+pos.model.null <- glmer(response ~ 1 + (1|chiton), data = poscontrol, family = binomial(),                             control = glmerControl(optimizer = "optimx",                                                       calc.derivs = FALSE,
+                    optCtrl = list(method = "nlminb", starttests = FALSE)))
+pos.model.null
+```
+
+```{r}
 anova(pos.model,pos.model.null)
+```
+
+
+```{r}
 summary(glht(pos.model, mcp(experiment="Tukey")))
 ```
-There's no SD between null and model and AIC is only very slightly better. Therefore, two experiments will be combined into one for analysis
+
+There's no significant difference between null and model with the LRT and AIC is only very slightly better. Therefore, two experiments will be combined into one for analysis.
 
 ```{r}
 bargraph.CI(stimulus, response, legend=T, data=loomingcomb, ylim=c(0,1), xlab = "Stimulus", ylab = "Response") #tp see black responses separately.
@@ -133,71 +162,112 @@ n.count <- tapply(loomingcomb$response, list(loomingcomb$stimulus), length)
 n.count
 se.count <- sd.count/sqrt(n.count)
 se.count
-
 ```
 
 
 ```{r}
-bargraph.CI(stimulus, response, group = experiment, legend=T, data=loomingcomb, ylim=c(0,1), xlab = "Stimulus", ylab = "Response") #tp see black responses separately.
+bargraph.CI(stimulus, response, group = experiment, legend=T,
+            data=loomingcomb, ylim=c(0,1),
+            xlab = "Stimulus", ylab = "Response") #tp see black responses separately.
 
 ```
 
-##Model
+##  Model
 
-###Null Model
+### Null Model
  
 ```{r}
-loomingmodel.null <-glmer(response ~ 1 + (1|chiton), data = loomingcomb, family = binomial(),                             control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
+loomingmodel.null <-glmer(response ~ 1 + (1|chiton),
+                          data = loomingcomb, family = binomial(),                              
+                          control = glmerControl(optimizer = "optimx", calc.derivs = FALSE,
                                               optCtrl = list(method = "nlminb", starttests = FALSE)))
 ```
  
-#to see if there's an effect of length.
+To see if there's an effect of length.
+
 ```{r}
-loomingmodel.example <- glmer(response ~ stimulus * length + (1|chiton),
+loomingmodel.1 <- glmer(response ~ stimulus * length + (1|chiton),
+                              data = loomingcomb, family = binomial(),      
+                    control = glmerControl(
+                    optimizer = "optimx", calc.derivs = FALSE,
+                    optCtrl = list(method = "nlminb", starttests = FALSE)))  
+
+loomingmodel.2 <- glmer(response ~ stimulus + length + (1|chiton),
                               data = loomingcomb, family = binomial(),      
                     control = glmerControl(
                       optimizer = "optimx", calc.derivs = FALSE,
                                            optCtrl = list(method = "nlminb", starttests = FALSE)))  
 
-loomingmodel.example2 <- glmer(response ~ stimulus + length + (1|chiton),
+loomingmodel.3 <- glmer(response ~ stimulus + (1|chiton),
                               data = loomingcomb, family = binomial(),      
                     control = glmerControl(
                       optimizer = "optimx", calc.derivs = FALSE,
                                            optCtrl = list(method = "nlminb", starttests = FALSE)))  
+```
 
-loomingmodel.example3 <- glmer(response ~ stimulus + (1|chiton),
-                              data = loomingcomb, family = binomial(),      
-                    control = glmerControl(
-                      optimizer = "optimx", calc.derivs = FALSE,
-                                           optCtrl = list(method = "nlminb", starttests = FALSE)))  
 
-anova(loomingmodel.example,loomingmodel.example2,loomingmodel.example3,loomingmodel.null)
-
-summary(loomingmodel.example)
-
+### Model comparison
+ 
+```{r}
+anova(loomingmodel.1,loomingmodel.2,loomingmodel.3,loomingmodel.null)
 ```
  
+ 
+ 
+```{r}
+summary(loomingmodel.1)
+```
+
 
 AIC comparison shows that the model that includes an interaction between length and stimulus. Thus length will be considered.
 
 
-After finding out the best model that incorporates length is the one with an interaction with stimulus, I added model with a random slope for chiton. This model was not better than the model including an interaction with length but not a random slope. Therefore the model used was loomingmodel.example.
+After finding out the best model that incorporates length is the one with an interaction with stimulus, I added model with a random slope for chiton. This model was not better than the model including an interaction with length but not a random slope. Therefore the model used was loomingmodel.1.
 
 
-The best model is the one that includes an interaction between stimulus and length, but considering different response rates for each chiton does not make a difference. Thus loomingmodel.example is the best model.
-
+The best model is the one that includes an interaction between stimulus and length, but considering different response rates for each chiton does not make a difference. Thus loomingmodel.1 is the best model.
 
 I think from this I can conclude that the biggest effect of individual is on the positive control ("black"), but also has an impact on even background,compared with even black. Length slightly affects the responses of even black, but not much impact on +ive control or even background. 
 
-
 Adding random slope for chiton (individual) did not make a difference, therefore this was excluded from the model and the above one is chosen.
 
+### Marginal effect at mean of stimulus type
+
+Shows the effect of the stimulus type at the average values of the other effects.
 
 ```{r}
-apred <- ggpredict(loomingmodel.example,'stimulus') 
+apred <- ggpredict(loomingmodel.1,'stimulus') 
 error <- qt(0.975,df=n.count-1)*sd.count/sqrt(n.count)
 xaxis <- c("Black", "even_background", "even_black", "White")
 
-ggplot() + geom_point(data = apred, aes(x, predicted), colour = "green") + geom_errorbar(data = apred, aes(x = x, y = predicted, ymin = conf.low, ymax = conf.high), colour = "green") + geom_point(aes(apred$x, mean.count), colour = "black") + geom_errorbar(aes(xaxis, mean.count, ymin=mean.count-error, ymax=mean.count+error))
+ggplot() + geom_point(data = apred, aes(x, predicted), colour = "green") + 
+  geom_errorbar(data = apred, aes(x = x, y = predicted, ymin = conf.low, ymax = conf.high),
+                colour = "green") + 
+  geom_point(aes(apred$x, mean.count), colour = "black") + 
+  geom_errorbar(aes(xaxis, mean.count, ymin=mean.count-error, ymax=mean.count+error)) + 
+  theme_classic() + ylim(0,1) +
+  theme(axis.line = element_blank() 
+        )
 ```
+
+### Marginal effect at mean of length
+
+Shows the effect of the chiton body length at the average values of the other effects.
+
+```{r}
+apred <- ggpredict(loomingmodel.1,'length') 
+plot(apred)
+```
+
+Very small animals perform worse (c. 90%) than the largest. There are far more trials with black than with white in the dataset. So, we can investigate with both length and stimulus predictors. 
+
+
+### Marginal effect at mean of the interaction between length and stimulus
+
+```{r}
+apred <- ggpredict(loomingmodel.1,c('length','stimulus')) 
+plot(apred)
+```
+
+Interestingly, the largest animals nearly always respond to the black stimulus but the smallest also respond over 95% of the time.  This skew grows with the even_black stimulus: small animals respond only half the time, whereas the largest do over 95% of the time. Could this response be due to their visual ecology or improved performance with size, or could experimental conditions play a role?
 
