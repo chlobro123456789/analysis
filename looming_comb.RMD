@@ -39,7 +39,6 @@ looming$chiton <- as.factor(looming$chiton)
 looming$experiment <-as.factor(looming$experiment)
 looming$response <- as.numeric(looming$response)
 
-
 str(looming)
 ```
 
@@ -138,7 +137,7 @@ anova(pos.model,pos.model.null)
 summary(glht(pos.model, mcp(experiment="Tukey")))
 ```
 
-There's no significant difference between null and model with the LRT and AIC is only very slightly better. Therefore, two experiments will be combined into one for analysis.
+There is no significant difference between null and model with the LRT and AIC is only very slightly better. Therefore, two experiments will be combined into one for analysis.
 
 ```{r}
 bargraph.CI(stimulus, response, legend=T, data=loomingcomb, ylim=c(0,1), xlab = "Stimulus", ylab = "Response") #tp see black responses separately.
@@ -196,24 +195,28 @@ loomingmodel.2 <- glmer(response ~ stimulus + length + (1|chiton),
                               data = loomingcomb, family = binomial(),      
                     control = glmerControl(
                       optimizer = "optimx", calc.derivs = FALSE,
-                                           optCtrl = list(method = "nlminb", starttests = FALSE)))  
+                                           optCtrl = list(method = "nlminb", starttests = FALSE)))
 
 loomingmodel.3 <- glmer(response ~ stimulus + (1|chiton),
                               data = loomingcomb, family = binomial(),      
                     control = glmerControl(
                       optimizer = "optimx", calc.derivs = FALSE,
                                            optCtrl = list(method = "nlminb", starttests = FALSE)))  
+loomingmodel.4 <- glmer(response ~ length + (1|chiton),
+                              data = loomingcomb, family = binomial(),      
+                    control = glmerControl(
+                      optimizer = "optimx", calc.derivs = FALSE,
+                                           optCtrl = list(method = "nlminb", starttests = FALSE)))
 ```
 
 
 ### Model comparison
  
 ```{r}
-anova(loomingmodel.1,loomingmodel.2,loomingmodel.3,loomingmodel.null)
+anova(loomingmodel.1,loomingmodel.2,loomingmodel.3,loomingmodel.4,loomingmodel.null)
 ```
  
- 
- 
+
 ```{r}
 summary(loomingmodel.1)
 ```
